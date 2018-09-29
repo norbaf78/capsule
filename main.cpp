@@ -7,6 +7,8 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
+#define DEBUG
+
 using namespace std;
 using namespace cv;
 
@@ -61,9 +63,18 @@ int main(int argc, char *argv[])
         else
             cout << "error" << endl;
 
-        cout << hour.toStdString() << "-" << minute.toStdString() << "-" <<  second.toStdString() << endl;
         if((hour != "00") || (minute != "00") || (second != "00")){
-            cout << "available pills" << endl;
+#ifdef DEBUG
+            cvtColor(image,image,CV_BGR2GRAY);
+            cvtColor(image,image,CV_GRAY2BGR);
+            putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
+                    minute.toStdString() + ":" + second.toStdString(), Point(70/*100*/, 250), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.7, CV_RGB(255,255,255), /*0.8*/0.9);
+            circle(image, Point(circle_center_x,circle_center_y), 8, CV_RGB(255,0,0), -1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 3, CV_RGB(255,0,0), -1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 8, CV_RGB(0,0,0), 1, 8, 0);
+#endif
+
+#ifndef DEBUG
             putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
                     minute.toStdString() + ":" + second.toStdString(), Point(70/*100*/, 250), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.7, CV_RGB(255,255,255), /*0.8*/0.9);
             circle(image, Point(circle_center_x,circle_center_y), 8, CV_RGB(255,255,255), -1, 8, 0);
@@ -71,12 +82,19 @@ int main(int argc, char *argv[])
             circle(image, Point(circle_center_x,circle_center_y), 8, CV_RGB(0,0,0), 1, 8, 0);
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
+#endif
         }
         else{
-            cout << "no pills" << endl;
-            putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(70, 250), FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255,255,255), 0.9);
+#ifdef DEBUG
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
+#endif
+            cout << "no pills" << endl;
+            putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(70, 250), FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255,255,255), 0.9);
+#ifndef DEBUG
+            cvtColor(image,image,CV_BGR2GRAY);
+            cvtColor(image,image,CV_GRAY2BGR);
+#endif
         }
 
 
@@ -163,6 +181,27 @@ int main(int argc, char *argv[])
 
     out << "finish !!!" << endl;
     cout << "small images in big image: " << counter << endl;
+
+
+
+
+    double alpha = 0.8; double beta;
+    Mat src1 = imread(save_path.toStdString() + "test_small_image_\\big_image_.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat src2 = imread(save_path.toStdString() + "test_small_image_\\ms.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat src3 = imread(save_path.toStdString() + "test_small_image_\\ms_.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat dst;
+    beta = ( 1.0 - alpha );
+    addWeighted( src1, alpha, src2, beta, 0.0, dst);
+    imwrite( save_path.toStdString() + "test_small_image_\\result_.jpg", dst);
+    addWeighted( src1, alpha, src3, beta, 0.0, dst);
+    imwrite( save_path.toStdString() + "test_small_image_\\result2_.jpg", dst);
+
+
+
+    out << "finish !!!" << endl;
+    waitKey(0);
+
+
     return a.exec();
 
 }
