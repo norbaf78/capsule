@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
     const int images_in_x = 40;
     const int images_in_y =25;
     const int border_pixel = 257;
-    const int circle_center_x = 30;
-    const int circle_center_y = 30;
+    const int circle_center_x = 58;
+    const int circle_center_y = 58;
     QString save_path = "C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_\\";
     QDirIterator it("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\Google Foto", QStringList() << "*_org.jpg", QDir::Files, QDirIterator::Subdirectories);
     //QDirIterator it("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\test_image_", QStringList() << "*_org.jpg", QDir::Files, QDirIterator::Subdirectories);
@@ -34,8 +34,6 @@ int main(int argc, char *argv[])
     int anno_2017[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
     int anno_2018[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
     int anno_have_to_be[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
-
-
 
     while (it.hasNext()){
         it.next();
@@ -69,17 +67,17 @@ int main(int argc, char *argv[])
             cvtColor(image,image,CV_GRAY2BGR);
             putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
                     minute.toStdString() + ":" + second.toStdString(), Point(70/*100*/, 250), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.7, CV_RGB(255,255,255), /*0.8*/0.9);
-            circle(image, Point(circle_center_x,circle_center_y), 8, CV_RGB(255,0,0), -1, 8, 0);
-            circle(image, Point(circle_center_x,circle_center_y), 3, CV_RGB(255,0,0), -1, 8, 0);
-            circle(image, Point(circle_center_x,circle_center_y), 8, CV_RGB(0,0,0), 1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 15, CV_RGB(0,0,255), -1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 4, CV_RGB(0,0,255), -1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 15, CV_RGB(0,0,0), 1, 8, 0);
 #endif
 
 #ifndef DEBUG
             putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
                     minute.toStdString() + ":" + second.toStdString(), Point(70/*100*/, 250), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.7, CV_RGB(255,255,255), /*0.8*/0.9);
-            circle(image, Point(circle_center_x,circle_center_y), 8, CV_RGB(255,255,255), -1, 8, 0);
-            circle(image, Point(circle_center_x,circle_center_y), 3, CV_RGB(0,0,0), -1, 8, 0);
-            circle(image, Point(circle_center_x,circle_center_y), 8, CV_RGB(0,0,0), 1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 15, CV_RGB(255,255,255), -1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 4, CV_RGB(0,0,0), -1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 15, CV_RGB(0,0,0), 1, 8, 0);
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
 #endif
@@ -197,13 +195,49 @@ int main(int argc, char *argv[])
     imwrite( save_path.toStdString() + "test_small_image_\\result2_.jpg", dst);
 
 
+    unsigned char R_img_text;
+    unsigned char G_img_text;
+    unsigned char B_img_text;
+    unsigned char R_img_to_modify;
+    unsigned char G_img_to_modify;
+    unsigned char B_img_to_modify;
+    cv::Mat img_text = cv::imread(save_path.toStdString() + "test_small_image_\\ms_.jpg");
+    cv::Mat img_to_modify = cv::imread(save_path.toStdString() + "test_small_image_\\big_image_.jpg");
+    cout << "ms_.jpg: " << img_text.rows << "  -  " << img_text.cols << endl;
+    cout << "big_image_.jpg: " << img_to_modify.rows << "  -  " << img_to_modify.cols << endl;
+    for(int i=0; i<img_text.rows; i++)
+        for(int j=0; j<img_text.cols; j++){
+            // You can now access the pixel value with cv::Vec3b
+            R_img_text = img_text.at<cv::Vec3b>(i,j)[2];
+            G_img_text = img_text.at<cv::Vec3b>(i,j)[1];
+            B_img_text = img_text.at<cv::Vec3b>(i,j)[0];
+            R_img_to_modify = img_to_modify.at<cv::Vec3b>(i,j)[2];
+            G_img_to_modify = img_to_modify.at<cv::Vec3b>(i,j)[1];
+            B_img_to_modify = img_to_modify.at<cv::Vec3b>(i,j)[0];
+            if(R_img_text==0 && G_img_text==0 && B_img_text==0){
+                if(R_img_to_modify != G_img_to_modify && R_img_to_modify != B_img_to_modify &&  G_img_to_modify != B_img_to_modify){
+                    R_img_to_modify = 255;
+                    G_img_to_modify = 255;
+                    B_img_to_modify = 0;
+                }
+            }
+            else if(R_img_text==255 && G_img_text==255 && B_img_text==255){
+                if(R_img_to_modify != G_img_to_modify && R_img_to_modify != B_img_to_modify &&  G_img_to_modify != B_img_to_modify){
 
-    out << "finish !!!" << endl;
+                    R_img_to_modify = 255;
+                    G_img_to_modify = 255;
+                    B_img_to_modify = 255;
+                }
+            }
+            img_to_modify.at<cv::Vec3b>(i,j)[2] = R_img_to_modify;
+            img_to_modify.at<cv::Vec3b>(i,j)[1] = G_img_to_modify;
+            img_to_modify.at<cv::Vec3b>(i,j)[0] = B_img_to_modify;
+        }
+    imwrite( save_path.toStdString() + "test_small_image_\\fax_.jpg", img_to_modify);
+    out << "temporary finish !!!" << endl;
     waitKey(0);
 
-
     return a.exec();
-
 }
 
 
