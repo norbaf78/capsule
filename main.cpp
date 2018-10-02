@@ -201,6 +201,9 @@ int main(int argc, char *argv[])
     unsigned char R_img_to_modify;
     unsigned char G_img_to_modify;
     unsigned char B_img_to_modify;
+    unsigned char R_img_to_modify2;
+    unsigned char G_img_to_modify2;
+    unsigned char B_img_to_modify2;
     cv::Mat img_text = cv::imread(save_path.toStdString() + "test_small_image_\\ms_.jpg");
     cv::Mat img_to_modify = cv::imread(save_path.toStdString() + "test_small_image_\\big_image_.jpg");
     cout << "ms_.jpg: " << img_text.rows << "  -  " << img_text.cols << endl;
@@ -219,11 +222,10 @@ int main(int argc, char *argv[])
                     R_img_to_modify = 255;
                     G_img_to_modify = 255;
                     B_img_to_modify = 0;
-                }
+                }         
             }
             else if(R_img_text==255 && G_img_text==255 && B_img_text==255){
                 if(R_img_to_modify != G_img_to_modify && R_img_to_modify != B_img_to_modify &&  G_img_to_modify != B_img_to_modify){
-
                     R_img_to_modify = 255;
                     G_img_to_modify = 255;
                     B_img_to_modify = 255;
