@@ -68,8 +68,10 @@ int main(int argc, char *argv[])
             putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
                     minute.toStdString() + ":" + second.toStdString(), Point(70/*100*/, 250), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.7, CV_RGB(255,255,255), /*0.8*/0.9);
             circle(image, Point(circle_center_x,circle_center_y), 15, CV_RGB(0,0,255), -1, 8, 0);
-            circle(image, Point(circle_center_x,circle_center_y), 4, CV_RGB(0,0,255), -1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 4, CV_RGB(255,255,255), -1, 8, 0);
             circle(image, Point(circle_center_x,circle_center_y), 15, CV_RGB(0,0,0), 1, 8, 0);
+            line(image, Point(circle_center_x-3,circle_center_y), Point(circle_center_x+3,circle_center_y), CV_RGB(0,0,0), 1, 8, 0);
+            line(image, Point(circle_center_x,circle_center_y-3), Point(circle_center_x,circle_center_y+3), CV_RGB(0,0,0), 1, 8, 0);
 #endif
 
 #ifndef DEBUG
@@ -78,6 +80,8 @@ int main(int argc, char *argv[])
             circle(image, Point(circle_center_x,circle_center_y), 15, CV_RGB(255,255,255), -1, 8, 0);
             circle(image, Point(circle_center_x,circle_center_y), 4, CV_RGB(0,0,0), -1, 8, 0);
             circle(image, Point(circle_center_x,circle_center_y), 15, CV_RGB(0,0,0), 1, 8, 0);
+            line(image, Point(circle_center_x-3,circle_center_y), Point(circle_center_x+3,circle_center_y), CV_RGB(0,0,0), 1, 8, 0);
+            line(image, Point(circle_center_x,circle_center_y-3), Point(circle_center_x,circle_center_y+3), CV_RGB(0,0,0), 1, 8, 0);
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
 #endif
