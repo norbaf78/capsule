@@ -7,7 +7,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-#define DEBUG
+//#define DEBUG
 
 using namespace std;
 using namespace cv;
@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
 
     QTextStream out(stdout);
     Mat image;
+    Mat image_new;
     Mat image_small_clipped;
     Rect roi;
     int count = 0;
@@ -37,12 +38,13 @@ int main(int argc, char *argv[])
     const int images_in_x = 40;
     const int images_in_y =25;
     const int border_pixel = 257;
+    const int border_pixel_new = 170;
     const int circle_center_x = 58;
     const int circle_center_y = 58;
     const int circle_center_x_new = 20;
     const int circle_center_y_new = 20;
-    const int dimension_x =(int)(256*2)/3;
-    const int dimension_y =(int)(256*2)/3;
+    const int dimension_x =(int)150;//(256*2)/3;
+    const int dimension_y =(int)150;//(256*2)/3;
     QString save_path = "C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_\\";
     QString save_path2 = "C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_new\\";
     QDirIterator it("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\Google Foto", QStringList() << "*_org.jpg", QDir::Files, QDirIterator::Subdirectories);
@@ -109,7 +111,7 @@ int main(int argc, char *argv[])
             cvtColor(crop,crop,CV_BGR2GRAY);
             cvtColor(crop,crop,CV_GRAY2BGR);
             putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
-                    minute.toStdString() + ":" + second.toStdString(), Point(5, 164), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.6, CV_RGB(255,255,255), /*0.8*/0.9);
+                    minute.toStdString() + ":" + second.toStdString(), Point(13, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 7, CV_RGB(0,0,255), -1, 8, 0);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 4, CV_RGB(255,255,255), -1, 8, 0);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 7, CV_RGB(0,0,0), 1, 8, 0);
@@ -120,21 +122,21 @@ int main(int argc, char *argv[])
 #ifndef DEBUG
             putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
                     minute.toStdString() + ":" + second.toStdString(), Point(70/*100*/, 250), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.7, CV_RGB(255,255,255), /*0.8*/0.9);
-            circle(image, Point(circle_center_x,circle_center_y), 7, CV_RGB(255,255,255), -1, 8, 0);
-            circle(image, Point(circle_center_x,circle_center_y), 4, CV_RGB(0,0,0), -1, 8, 0);
-            circle(image, Point(circle_center_x,circle_center_y), 7, CV_RGB(0,0,0), 1, 8, 0);
-            line(image, Point(circle_center_x-3,circle_center_y), Point(circle_center_x+3,circle_center_y), CV_RGB(0,0,0), 1, 8, 0);
-            line(image, Point(circle_center_x,circle_center_y-3), Point(circle_center_x,circle_center_y+3), CV_RGB(0,0,0), 1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 5, CV_RGB(255,255,255), -1, 8, 0);
+            //circle(image, Point(circle_center_x,circle_center_y), 4, CV_RGB(0,0,0), -1, 8, 0);
+            //circle(image, Point(circle_center_x,circle_center_y), 6, CV_RGB(0,0,0), 1, 8, 0);
+            line(image, Point(circle_center_x-4,circle_center_y), Point(circle_center_x+4,circle_center_y), CV_RGB(0,0,0), 1, 8, 0);
+            line(image, Point(circle_center_x,circle_center_y-4), Point(circle_center_x,circle_center_y+4), CV_RGB(0,0,0), 1, 8, 0);
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
 
             putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
-                    minute.toStdString() + ":" + second.toStdString(), Point(5/*100*/, 164), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.6, CV_RGB(255,255,255), /*0.8*/0.9);
-            circle(crop, Point(circle_center_x_new,circle_center_y_new), 7, CV_RGB(255,255,255), -1, 8, 0);
-            circle(crop, Point(circle_center_x_new,circle_center_y_new), 4, CV_RGB(0,0,0), -1, 8, 0);
-            circle(crop, Point(circle_center_x_new,circle_center_y_new), 7, CV_RGB(0,0,0), 1, 8, 0);
-            line(crop, Point(circle_center_x_new-3,circle_center_y_new), Point(circle_center_x_new+3,circle_center_y_new), CV_RGB(0,0,0), 1, 8, 0);
-            line(crop, Point(circle_center_x_new,circle_center_y_new-3), Point(circle_center_x_new,circle_center_y_new+3), CV_RGB(0,0,0), 1, 8, 0);
+                    minute.toStdString() + ":" + second.toStdString(), Point(13/*100*/, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
+            circle(crop, Point(circle_center_x_new,circle_center_y_new), 5, CV_RGB(255,255,255), -1, 8, 0);
+            //circle(crop, Point(circle_center_x_new,circle_center_y_new), 4, CV_RGB(0,0,0), -1, 8, 0);
+            //circle(crop, Point(circle_center_x_new,circle_center_y_new), 6, CV_RGB(0,0,0), 1, 8, 0);
+            line(crop, Point(circle_center_x_new-4,circle_center_y_new), Point(circle_center_x_new+4,circle_center_y_new), CV_RGB(0,0,0), 1, 8, 0);
+            line(crop, Point(circle_center_x_new,circle_center_y_new-4), Point(circle_center_x_new,circle_center_y_new+4), CV_RGB(0,0,0), 1, 8, 0);
             cvtColor(crop,crop,CV_BGR2GRAY);
             cvtColor(crop,crop,CV_GRAY2BGR);
 #endif
@@ -148,7 +150,7 @@ int main(int argc, char *argv[])
 #endif
             cout << "no pills" << endl;
             putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(70, 250), FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255,255,255), 0.9);
-            putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(120, 120), FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255,255,255), 0.9);
+            putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(13, 145), FONT_HERSHEY_COMPLEX_SMALL, 0.5, CV_RGB(255,255,255), 0.9);
 #ifndef DEBUG
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
@@ -199,14 +201,22 @@ int main(int argc, char *argv[])
     int counter=0;
     bool images_completed = false;
     Mat image_small;
+    Mat image_small_new;
     image = imread(save_path.toStdString() + "test_small_image_\\test_small_image_.jpg",CV_LOAD_IMAGE_COLOR);
+    image_new = imread(save_path2.toStdString() + "test_small_image_\\test_small_image_.jpg",CV_LOAD_IMAGE_COLOR);
     int image_cols = image.cols;
     int image_rows = image.rows;
+    int image_cols_new = image_new.cols;
+    int image_rows_new = image_new.rows;
 
     out << "image: " << save_path << "test_small_image_\\test_small_image_.jpg" << endl;
     out << "image_cols: " << image_cols << "  -  " << "image_rows: " << image_rows << endl;
     int index_x=0, index_y=0;
     Mat big_image(2*border_pixel+(images_in_y*image_rows)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*image_cols)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
+    Mat big_image_new(2*border_pixel_new+(images_in_y*image_rows_new)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*image_cols_new)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
+
+    //////////////////////////////////
+    //////////////////////////////////
 
     // first image è stato tolto C360 alla img originale per togliera dalla iterazione
 //    QString first_image = "2732_2015-04-02-08-37-49-922_org.jpg.jpg"; //
@@ -214,7 +224,6 @@ int main(int argc, char *argv[])
 //    image_small.copyTo(big_image(cv::Rect(border_pixel+index_x*(image_cols+1),border_pixel+index_y*(image_rows+1),image_small.cols, image_small.rows)));
 //    index_x++;
 //    counter++;
-
 
     QDirIterator it_bn_images("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_", QStringList() << "*C360*.jpg", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     while (it_bn_images.hasNext() && images_completed==false){
@@ -241,13 +250,59 @@ int main(int argc, char *argv[])
 //    index_x=0;
 //    counter++;
 
+
+
+
+
+    //////////////////////////////////
+    //////////////////////////////////
+    images_completed = false;
+
+    // first image è stato tolto C360 alla img originale per togliera dalla iterazione
+//    QString first_image_new = "2732_2015-04-02-08-37-49-922_org.jpg.jpg"; //
+//    image_small_new = imread((save_path2 + first_image).toStdString() ,CV_LOAD_IMAGE_COLOR);  // non viene trovata ???????
+//    image_small_new.copyTo(big_image(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel_new+index_y*(image_rows_new+1),image_small_new.cols, image_small.rows)));
+//    index_x++;
+//    counter++;
+
+    QDirIterator it_bn_images_new("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_new", QStringList() << "*C360*.jpg", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    while (it_bn_images_new.hasNext() && images_completed==false){
+       it_bn_images_new.next();
+       image_small_new = imread(it_bn_images_new.filePath().toStdString(),CV_LOAD_IMAGE_COLOR);
+       out << "index_x: " << index_x << " index_y: " << index_y << "   -    " << "image_smallcols: " << image_small.cols << "  -  " << "image_smallrows: " << image_small.rows << endl;
+       image_small_new.copyTo(big_image_new(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel+index_y*(image_rows_new+1),image_small_new.cols, image_small.rows)));
+
+       index_x++;
+       if(index_x>images_in_x-1){
+           index_y++;
+           index_x=0;
+       }
+       if(index_y>images_in_y-1)
+           images_completed = true;
+       counter++;
+    }
+
+    // last image è stato tolto C360 alla img originale per togliera dalla iterazione
+//    QString last_image_new = "1828_2017-05-10-07-09-46-801_org.jpg.jpg"; // è stato tolto C360 alla img originale per togliera dalla iterazione
+//    image_small_new = imread((save_path2 + last_image).toStdString() ,CV_LOAD_IMAGE_COLOR);
+//    image_small_new.copyTo(big_image_new(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel_new+index_y*(image_rows_new+1),image_small.cols, image_small_new.rows)));
+//    index_y++;
+//    index_x=0;
+//    counter++;
+
+
+
+
     cout << save_path.toStdString() + "test_small_image_\\big_image_.jpg" << endl;
     imwrite( save_path.toStdString() + "test_small_image_\\big_image_.jpg" , big_image );
+    cout << save_path2.toStdString() + "test_small_image_\\big_image_.jpg" << endl;
+    imwrite( save_path2.toStdString() + "test_small_image_\\big_image_.jpg" , big_image_new );
 
     out << "finish !!!" << endl;
     cout << "small images in big image: " << counter << endl;
 
 
+    ////////////////////////// qui arrivati
 
 
     double alpha = 0.8; double beta;
