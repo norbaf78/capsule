@@ -82,6 +82,10 @@ int main(int argc, char *argv[])
         roi.width = dimension_x;
         roi.height = dimension_y;
         cout << "Point: "  << roi.x << ":" << roi.y << " width: " << roi.width << " height: " << roi.height << endl;
+        if((roi.x + roi.width)>image_small_clipped.cols-1) roi.x = image_small_clipped.cols - roi.width;
+        if((roi.y + roi.height)>image_small_clipped.rows-1) roi.y = image_small_clipped.rows - roi.height;
+        if(roi.x <0) roi.x = 0;
+        if(roi.y <0) roi.y = 0;
         cv::Mat crop = image_small_clipped(roi); /* Crop the original image to the defined ROI */
 ////////////////////////////////////////////
 
@@ -111,7 +115,7 @@ int main(int argc, char *argv[])
             cvtColor(crop,crop,CV_BGR2GRAY);
             cvtColor(crop,crop,CV_GRAY2BGR);
             putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
-                    minute.toStdString() + ":" + second.toStdString(), Point(13, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
+                    minute.toStdString() + ":" + second.toStdString(), Point(11, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 7, CV_RGB(0,0,255), -1, 8, 0);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 4, CV_RGB(255,255,255), -1, 8, 0);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 7, CV_RGB(0,0,0), 1, 8, 0);
@@ -131,7 +135,7 @@ int main(int argc, char *argv[])
             cvtColor(image,image,CV_GRAY2BGR);
 
             putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
-                    minute.toStdString() + ":" + second.toStdString(), Point(13/*100*/, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
+                    minute.toStdString() + ":" + second.toStdString(), Point(11/*100*/, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 5, CV_RGB(255,255,255), -1, 8, 0);
             //circle(crop, Point(circle_center_x_new,circle_center_y_new), 4, CV_RGB(0,0,0), -1, 8, 0);
             //circle(crop, Point(circle_center_x_new,circle_center_y_new), 6, CV_RGB(0,0,0), 1, 8, 0);
@@ -165,13 +169,14 @@ int main(int argc, char *argv[])
         QTime time = QTime::currentTime();
         qsrand((uint)time.msec());
         int randomValue = qrand() % rand_number_from0tothis;
-        QString number = QString::number(randomValue);
+        if(count<1000) randomValue += 20000;
+        QString number = QString::number(randomValue);        
         imwrite( (save_path + number  + it.fileName()).toStdString() + ".jpg" , image );
         imwrite( (save_path2 + number  + it.fileName()).toStdString() + ".jpg" , crop );
 
 
-
         count++;
+        cout << "images: " << count << endl;
     //    namedWindow( it.fileName().toStdString(), WINDOW_AUTOSIZE);// Create a window for display.
     //    imshow( it.fileName().toStdString(), image );
     //    waitKey(0);
