@@ -8,6 +8,7 @@
 #include <opencv2/opencv.hpp>
 
 //#define DEBUG
+#define IMAGES_ALREADY_AVAILABLE
 
 using namespace std;
 using namespace cv;
@@ -54,6 +55,8 @@ int main(int argc, char *argv[])
     int anno_2017[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
     int anno_2018[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
     int anno_have_to_be[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+
+#ifndef IMAGES_ALREADY_AVAILABLE
 
     while (it.hasNext()){
         it.next();
@@ -169,7 +172,7 @@ int main(int argc, char *argv[])
         QTime time = QTime::currentTime();
         qsrand((uint)time.msec());
         int randomValue = qrand() % rand_number_from0tothis;
-        if(count<1000) randomValue += 20000;
+        if(count>1000) randomValue += 20000;
         QString number = QString::number(randomValue);        
         imwrite( (save_path + number  + it.fileName()).toStdString() + ".jpg" , image );
         imwrite( (save_path2 + number  + it.fileName()).toStdString() + ".jpg" , crop );
@@ -181,8 +184,9 @@ int main(int argc, char *argv[])
     //    imshow( it.fileName().toStdString(), image );
     //    waitKey(0);
     //    destroyWindow(it.fileName().toStdString());
-
     }
+
+
     out << "images available: " << count << endl;
     out << "anno 2015" << endl;
     for(int i =0;i<12;i++)
@@ -199,7 +203,7 @@ int main(int argc, char *argv[])
     for(int i =0;i<12;i++)
         out << i+1 << ": " << anno_2018[i] << "  -   " << anno_have_to_be[i] << endl;
 
-
+#endif
 
 
     // create  big image
