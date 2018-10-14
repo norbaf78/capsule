@@ -37,14 +37,14 @@ int main(int argc, char *argv[])
     int rand_number_from0tothis = 10000;
     const int images_in_x = 40;
     const int images_in_y =25;
-    const int border_pixel = 257;
-    const int border_pixel_new = 170;
+    const int border_pixel = 257;    //   257:44(mm) = 170:x(mm) -> 30mm
+    const int border_pixel_new = 170;  // 170:30(mm) = 12:x(mm) -> 2mm
     const int circle_center_x = 58;
     const int circle_center_y = 58;
-    const int circle_center_x_new = 20;
-    const int circle_center_y_new = 20;
-    const int dimension_x =(int)150;//(256*2)/3;
-    const int dimension_y =(int)150;//(256*2)/3;
+    const int circle_center_x_new = 30;
+    const int circle_center_y_new = 30;
+    const int dimension_x =(int)150;
+    const int dimension_y =(int)150;
     QString save_path = "C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_\\";
     QString save_path2 = "C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_new\\";
     QDirIterator it("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\Google Foto", QStringList() << "*_org.jpg", QDir::Files, QDirIterator::Subdirectories);
@@ -126,21 +126,21 @@ int main(int argc, char *argv[])
 #ifndef DEBUG
             putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
                     minute.toStdString() + ":" + second.toStdString(), Point(70/*100*/, 250), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.7, CV_RGB(255,255,255), /*0.8*/0.9);
-            circle(image, Point(circle_center_x,circle_center_y), 5, CV_RGB(255,255,255), -1, 8, 0);
+            circle(image, Point(circle_center_x,circle_center_y), 6, CV_RGB(255,255,255), -1, 8, 0);
             //circle(image, Point(circle_center_x,circle_center_y), 4, CV_RGB(0,0,0), -1, 8, 0);
             //circle(image, Point(circle_center_x,circle_center_y), 6, CV_RGB(0,0,0), 1, 8, 0);
-            line(image, Point(circle_center_x-4,circle_center_y), Point(circle_center_x+4,circle_center_y), CV_RGB(0,0,0), 1, 8, 0);
-            line(image, Point(circle_center_x,circle_center_y-4), Point(circle_center_x,circle_center_y+4), CV_RGB(0,0,0), 1, 8, 0);
+            line(image, Point(circle_center_x-5,circle_center_y), Point(circle_center_x+5,circle_center_y), CV_RGB(0,0,0), 1, 8, 0);
+            line(image, Point(circle_center_x,circle_center_y-5), Point(circle_center_x,circle_center_y+5), CV_RGB(0,0,0), 1, 8, 0);
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
 
             putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
-                    minute.toStdString() + ":" + second.toStdString(), Point(11/*100*/, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
-            circle(crop, Point(circle_center_x_new,circle_center_y_new), 5, CV_RGB(255,255,255), -1, 8, 0);
+                    minute.toStdString() + ":" + second.toStdString(), Point(10/*100*/, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
+            circle(crop, Point(circle_center_x_new,circle_center_y_new), 6, CV_RGB(255,255,255), -1, 8, 0);
             //circle(crop, Point(circle_center_x_new,circle_center_y_new), 4, CV_RGB(0,0,0), -1, 8, 0);
             //circle(crop, Point(circle_center_x_new,circle_center_y_new), 6, CV_RGB(0,0,0), 1, 8, 0);
-            line(crop, Point(circle_center_x_new-4,circle_center_y_new), Point(circle_center_x_new+4,circle_center_y_new), CV_RGB(0,0,0), 1, 8, 0);
-            line(crop, Point(circle_center_x_new,circle_center_y_new-4), Point(circle_center_x_new,circle_center_y_new+4), CV_RGB(0,0,0), 1, 8, 0);
+            line(crop, Point(circle_center_x_new-5,circle_center_y_new), Point(circle_center_x_new+5,circle_center_y_new), CV_RGB(0,0,0), 1, 8, 0);
+            line(crop, Point(circle_center_x_new,circle_center_y_new-5), Point(circle_center_x_new,circle_center_y_new+5), CV_RGB(0,0,0), 1, 8, 0);
             cvtColor(crop,crop,CV_BGR2GRAY);
             cvtColor(crop,crop,CV_GRAY2BGR);
 #endif
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 #endif
             cout << "no pills" << endl;
             putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(70, 250), FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255,255,255), 0.9);
-            putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(13, 145), FONT_HERSHEY_COMPLEX_SMALL, 0.5, CV_RGB(255,255,255), 0.9);
+            putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(10, 145), FONT_HERSHEY_COMPLEX_SMALL, 0.5, CV_RGB(255,255,255), 0.9);
 #ifndef DEBUG
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
