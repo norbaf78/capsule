@@ -11,7 +11,7 @@
 
 //da rifare con sotto commentato per solo queste date 2017-05-17  2018-05-29 2018-02-18
 
-//#define IMAGES_ALREADY_AVAILABLE
+#define IMAGES_ALREADY_AVAILABLE
 
 using namespace std;
 using namespace cv;
@@ -211,65 +211,16 @@ int main(int argc, char *argv[])
     // create  big image
     int counter=0;
     bool images_completed = false;
-    Mat image_small;
     Mat image_small_new;
-    image = imread(save_path.toStdString() + "test_small_image_\\test_small_image_.jpg",CV_LOAD_IMAGE_COLOR);
-    image_new = imread(save_path2.toStdString() + "test_small_image_\\test_small_image_.jpg",CV_LOAD_IMAGE_COLOR);
-    int image_cols = image.cols;
-    int image_rows = image.rows;
+    image_new = imread(save_path2.toStdString() + "test_small_image_new\\test_small_image_.jpg",CV_LOAD_IMAGE_COLOR);
+    cout << save_path2.toStdString() << "test_small_image_new\\test_small_image_.jpg" << endl;
     int image_cols_new = image_new.cols;
     int image_rows_new = image_new.rows;
-
-    out << "image: " << save_path << "test_small_image_\\test_small_image_.jpg" << endl;
-    out << "image: " << save_path2 << "test_small_image_new\\test_small_image_.jpg" << endl;
-    out << "image_cols: " << image_cols << "  -  " << "image_rows: " << image_rows << endl;
     out << "image_cols_new: " << image_cols_new << "  -  " << "image_rows_new: " << image_rows_new << endl;
+
     int index_x=0, index_y=0;
-    Mat big_image(2*border_pixel+(images_in_y*image_rows)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*image_cols)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
-    Mat big_image_new(2*border_pixel_new+(images_in_y*image_rows_new)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*image_cols_new)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
+    Mat big_image_new(2*border_pixel_new+(images_in_y*image_rows_new)+(images_in_y-1)*1, 2*border_pixel_new+(images_in_x*image_cols_new)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
 
-    //////////////////////////////////
-    //////////////////////////////////
-
-    // first image è stato tolto C360 alla img originale per togliera dalla iterazione
-//    QString first_image = "2732_2015-04-02-08-37-49-922_org.jpg.jpg"; //
-//    image_small = imread((save_path + first_image).toStdString() ,CV_LOAD_IMAGE_COLOR);  // non viene trovata ???????
-//    image_small.copyTo(big_image(cv::Rect(border_pixel+index_x*(image_cols+1),border_pixel+index_y*(image_rows+1),image_small.cols, image_small.rows)));
-//    index_x++;
-//    counter++;
-
-    QDirIterator it_bn_images("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_", QStringList() << "*C360*.jpg", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-    while (it_bn_images.hasNext() && images_completed==false){
-       it_bn_images.next();
-       image_small = imread(it_bn_images.filePath().toStdString(),CV_LOAD_IMAGE_COLOR);
-       out << "index_x: " << index_x << " index_y: " << index_y << "   -    " << "image_smallcols: " << image_small.cols << "  -  " << "image_smallrows: " << image_small.rows << endl;
-       image_small.copyTo(big_image(cv::Rect(border_pixel+index_x*(image_cols+1),border_pixel+index_y*(image_rows+1),image_small.cols, image_small.rows)));
-
-       index_x++;
-       if(index_x>images_in_x-1){
-           index_y++;
-           index_x=0;
-       }
-       if(index_y>images_in_y-1)
-           images_completed = true;
-       counter++;
-    }
-
-    // last image è stato tolto C360 alla img originale per togliera dalla iterazione
-//    QString last_image = "1828_2017-05-10-07-09-46-801_org.jpg.jpg"; // è stato tolto C360 alla img originale per togliera dalla iterazione
-//    image_small = imread((save_path + last_image).toStdString() ,CV_LOAD_IMAGE_COLOR);
-//    image_small.copyTo(big_image(cv::Rect(border_pixel+index_x*(image_cols+1),border_pixel+index_y*(image_rows+1),image_small.cols, image_small.rows)));
-//    index_y++;
-//    index_x=0;
-//    counter++;
-
-
-
-
-
-    //////////////////////////////////
-    //////////////////////////////////
-    images_completed = false;
 
     // first image è stato tolto C360 alla img originale per togliera dalla iterazione
 //    QString first_image_new = "2732_2015-04-02-08-37-49-922_org.jpg.jpg"; //
@@ -278,12 +229,13 @@ int main(int argc, char *argv[])
 //    index_x++;
 //    counter++;
 
+    index_x = index_y = 0;
     QDirIterator it_bn_images_new("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_new", QStringList() << "*C360*.jpg", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     while (it_bn_images_new.hasNext() && images_completed==false){
        it_bn_images_new.next();
        image_small_new = imread(it_bn_images_new.filePath().toStdString(),CV_LOAD_IMAGE_COLOR);
-       out << "index_x: " << index_x << " index_y: " << index_y << "   -    " << "image_smallcols: " << image_small.cols << "  -  " << "image_smallrows: " << image_small.rows << endl;
-       image_small_new.copyTo(big_image_new(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel+index_y*(image_rows_new+1),image_small_new.cols, image_small.rows)));
+       out << "index_x: " << index_x << " index_y: " << index_y << "   -    " << "image_smallcols: " << image_small_new.cols << "  -  " << "image_smallrows: " << image_small_new.rows << endl;
+       image_small_new.copyTo(big_image_new(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel_new+index_y*(image_rows_new+1),image_small_new.cols, image_small_new.rows)));
 
        index_x++;
        if(index_x>images_in_x-1){
@@ -294,6 +246,7 @@ int main(int argc, char *argv[])
            images_completed = true;
        counter++;
     }
+    cout << "index_x: " << index_x << " - index_y: " << index_y << endl;
 
     // last image è stato tolto C360 alla img originale per togliera dalla iterazione
 //    QString last_image_new = "1828_2017-05-10-07-09-46-801_org.jpg.jpg"; // è stato tolto C360 alla img originale per togliera dalla iterazione
@@ -304,30 +257,22 @@ int main(int argc, char *argv[])
 //    counter++;
 
 
-
-
-    cout << save_path.toStdString() + "test_small_image_\\big_image_.jpg" << endl;
-    imwrite( save_path.toStdString() + "test_small_image_\\big_image_.jpg" , big_image );
-    cout << save_path2.toStdString() + "test_small_image_\\big_image_.jpg" << endl;
-    imwrite( save_path2.toStdString() + "test_small_image_\\big_image_.jpg" , big_image_new );
+    cout << save_path2.toStdString() + "test_small_image_new\\big_image_.jpg" << endl;
+    imwrite(save_path2.toStdString() + "test_small_image_new\\big_image_.jpg" , big_image_new );
 
     out << "finish !!!" << endl;
     cout << "small images in big image: " << counter << endl;
 
 
-    ////////////////////////// qui arrivati
 
 
     double alpha = 0.8; double beta;
-    Mat src1 = imread(save_path.toStdString() + "test_small_image_\\big_image_.jpg", CV_LOAD_IMAGE_COLOR);
-    Mat src2 = imread(save_path.toStdString() + "test_small_image_\\ms.jpg", CV_LOAD_IMAGE_COLOR);
-    Mat src3 = imread(save_path.toStdString() + "test_small_image_\\ms_.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat src1 = imread(save_path2.toStdString() + "test_small_image_new\\big_image_.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat src3 = imread(save_path2.toStdString() + "test_small_image_new\\ms_.jpg", CV_LOAD_IMAGE_COLOR);
     Mat dst;
     beta = ( 1.0 - alpha );
-    addWeighted( src1, alpha, src2, beta, 0.0, dst);
-    imwrite( save_path.toStdString() + "test_small_image_\\result_.jpg", dst);
     addWeighted( src1, alpha, src3, beta, 0.0, dst);
-    imwrite( save_path.toStdString() + "test_small_image_\\result2_.jpg", dst);
+    imwrite( save_path2.toStdString() + "test_small_image_new\\result2_new.jpg", dst);
 
 
     unsigned char R_img_text;
@@ -339,11 +284,11 @@ int main(int argc, char *argv[])
     unsigned char R_img_to_modify2;
     unsigned char G_img_to_modify2;
     unsigned char B_img_to_modify2;
-    cv::Mat img_text = cv::imread(save_path.toStdString() + "test_small_image_\\ms_.jpg");
-    cv::Mat img_to_modify = cv::imread(save_path.toStdString() + "test_small_image_\\big_image_.jpg");
+    cv::Mat img_text = cv::imread(save_path.toStdString() + "test_small_image_new\\ms_.jpg");
+    cv::Mat img_to_modify = cv::imread(save_path.toStdString() + "test_small_image_new\\big_image_.jpg");
     cout << "ms_.jpg: " << img_text.rows << "  -  " << img_text.cols << endl;
     cout << "big_image_.jpg: " << img_to_modify.rows << "  -  " << img_to_modify.cols << endl;
-    for(int i=0; i<img_text.rows; i++)
+ /*   for(int i=0; i<img_text.rows; i++)
         for(int j=0; j<img_text.cols; j++){
             // You can now access the pixel value with cv::Vec3b
             R_img_text = img_text.at<cv::Vec3b>(i,j)[2];
@@ -370,8 +315,8 @@ int main(int argc, char *argv[])
             img_to_modify.at<cv::Vec3b>(i,j)[1] = G_img_to_modify;
             img_to_modify.at<cv::Vec3b>(i,j)[0] = B_img_to_modify;
         }
-    imwrite( save_path.toStdString() + "test_small_image_\\fax_.jpg", img_to_modify);
-    out << "temporary finish !!!" << endl;
+    imwrite( save_path.toStdString() + "test_small_image_new\\fax_.jpg", img_to_modify);
+*/    out << "temporary finish !!!" << endl;
     waitKey(0);
 
     return a.exec();
