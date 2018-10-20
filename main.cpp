@@ -8,7 +8,10 @@
 #include <opencv2/opencv.hpp>
 
 //#define DEBUG
-#define IMAGES_ALREADY_AVAILABLE
+
+//da rifare con sotto commentato per solo queste date 2017-05-17  2018-05-29 2018-02-18
+
+//#define IMAGES_ALREADY_AVAILABLE
 
 using namespace std;
 using namespace cv;
@@ -57,7 +60,7 @@ int main(int argc, char *argv[])
     int anno_have_to_be[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
 
 #ifndef IMAGES_ALREADY_AVAILABLE
-
+    //da rifare questi passaggi per 2017-05-17  2018-05-29 2018-02-18
     while (it.hasNext()){
         it.next();
         QString year = it.fileName().mid(5,4);
@@ -219,7 +222,9 @@ int main(int argc, char *argv[])
     int image_rows_new = image_new.rows;
 
     out << "image: " << save_path << "test_small_image_\\test_small_image_.jpg" << endl;
+    out << "image: " << save_path2 << "test_small_image_new\\test_small_image_.jpg" << endl;
     out << "image_cols: " << image_cols << "  -  " << "image_rows: " << image_rows << endl;
+    out << "image_cols_new: " << image_cols_new << "  -  " << "image_rows_new: " << image_rows_new << endl;
     int index_x=0, index_y=0;
     Mat big_image(2*border_pixel+(images_in_y*image_rows)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*image_cols)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
     Mat big_image_new(2*border_pixel_new+(images_in_y*image_rows_new)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*image_cols_new)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
