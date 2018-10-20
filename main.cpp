@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
     int anno_have_to_be[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
 
 #ifndef IMAGES_ALREADY_AVAILABLE
-    //da rifare questi passaggi per 2017-05-17  2018-05-29 2018-02-18
     while (it.hasNext()){
         it.next();
         QString year = it.fileName().mid(5,4);
