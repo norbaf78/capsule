@@ -232,19 +232,29 @@ int main(int argc, char *argv[])
     index_x = index_y = 0;
     QDirIterator it_bn_images_new("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_new", QStringList() << "*C360*.jpg", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     while (it_bn_images_new.hasNext() && images_completed==false){
-       it_bn_images_new.next();
-       image_small_new = imread(it_bn_images_new.filePath().toStdString(),CV_LOAD_IMAGE_COLOR);
-       out << "index_x: " << index_x << " index_y: " << index_y << "   -    " << "image_smallcols: " << image_small_new.cols << "  -  " << "image_smallrows: " << image_small_new.rows << endl;
-       image_small_new.copyTo(big_image_new(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel_new+index_y*(image_rows_new+1),image_small_new.cols, image_small_new.rows)));
+        it_bn_images_new.next();
+        int index = it_bn_images_new.fileName().indexOf('_');
+        QString year = it_bn_images_new.fileName().mid(index+1,4);
+        QString month = it_bn_images_new.fileName().mid(index+6,2);
+        QString day = it_bn_images_new.fileName().mid(index+9,2);
+        out << year << " " << month << " " << day << endl;
 
-       index_x++;
-       if(index_x>images_in_x-1){
-           index_y++;
-           index_x=0;
-       }
-       if(index_y>images_in_y-1)
-           images_completed = true;
-       counter++;
+
+        if(true){ // here I want verify the actual image is part of the first 1000 images I am using
+            cout << "---" << it_bn_images_new.fileName().toStdString() << "  " << endl;
+            image_small_new = imread(it_bn_images_new.filePath().toStdString(),CV_LOAD_IMAGE_COLOR);
+            out << "index_x: " << index_x << " index_y: " << index_y << "   -    " << "image_smallcols: " << image_small_new.cols << "  -  " << "image_smallrows: " << image_small_new.rows << endl;
+            image_small_new.copyTo(big_image_new(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel_new+index_y*(image_rows_new+1),image_small_new.cols, image_small_new.rows)));
+
+            index_x++;
+            if(index_x>images_in_x-1){
+                index_y++;
+                index_x=0;
+            }
+            if(index_y>images_in_y-1)
+                images_completed = true;
+            counter++;
+        }
     }
     cout << "index_x: " << index_x << " - index_y: " << index_y << endl;
 
@@ -281,42 +291,51 @@ int main(int argc, char *argv[])
     unsigned char R_img_to_modify;
     unsigned char G_img_to_modify;
     unsigned char B_img_to_modify;
-    unsigned char R_img_to_modify2;
-    unsigned char G_img_to_modify2;
-    unsigned char B_img_to_modify2;
-    cv::Mat img_text = cv::imread(save_path.toStdString() + "test_small_image_new\\ms_.jpg");
-    cv::Mat img_to_modify = cv::imread(save_path.toStdString() + "test_small_image_new\\big_image_.jpg");
+    unsigned char R_img_to_modify_a;
+    unsigned char R_img_to_modify_b;
+    unsigned char R_img_to_modify_c;
+    unsigned char R_img_to_modify_d;
+    unsigned char R_img_to_modify_e;
+    cv::Mat img_text = cv::imread(save_path2.toStdString() + "test_small_image_new\\ms_.jpg");
+    cv::Mat img_to_modify = cv::imread(save_path2.toStdString() + "test_small_image_new\\big_image_.jpg");
+    cv::Mat original_clone = img_to_modify.clone();
     cout << "ms_.jpg: " << img_text.rows << "  -  " << img_text.cols << endl;
     cout << "big_image_.jpg: " << img_to_modify.rows << "  -  " << img_to_modify.cols << endl;
- /*   for(int i=0; i<img_text.rows; i++)
-        for(int j=0; j<img_text.cols; j++){
+
+    for(int y=1; y<img_text.rows-1; y++){
+        for(int x=1; x<img_text.cols-1; x++){
             // You can now access the pixel value with cv::Vec3b
-            R_img_text = img_text.at<cv::Vec3b>(i,j)[2];
-            G_img_text = img_text.at<cv::Vec3b>(i,j)[1];
-            B_img_text = img_text.at<cv::Vec3b>(i,j)[0];
-            R_img_to_modify = img_to_modify.at<cv::Vec3b>(i,j)[2];
-            G_img_to_modify = img_to_modify.at<cv::Vec3b>(i,j)[1];
-            B_img_to_modify = img_to_modify.at<cv::Vec3b>(i,j)[0];
+            R_img_text = img_text.at<cv::Vec3b>(y,x)[2];
+            G_img_text = img_text.at<cv::Vec3b>(y,x)[1];
+            B_img_text = img_text.at<cv::Vec3b>(y,x)[0];
+            R_img_to_modify = img_to_modify.at<cv::Vec3b>(y,x)[2];
+            G_img_to_modify = img_to_modify.at<cv::Vec3b>(y,x)[1];
+            B_img_to_modify = img_to_modify.at<cv::Vec3b>(y,x)[0];
+            R_img_to_modify_a = img_to_modify.at<cv::Vec3b>(y-1,x)[2]; // this point to localize the x(croix) present on image
+            R_img_to_modify_b = img_to_modify.at<cv::Vec3b>(y,x-1)[2];
+            R_img_to_modify_c = img_to_modify.at<cv::Vec3b>(y+1,x)[2];
+            R_img_to_modify_d = img_to_modify.at<cv::Vec3b>(y,x+1)[2];
+            R_img_to_modify_e= img_to_modify.at<cv::Vec3b>(y+1,x+1)[2];
+
+
+
+
             if(R_img_text==0 && G_img_text==0 && B_img_text==0){
-                if(R_img_to_modify != G_img_to_modify && R_img_to_modify != B_img_to_modify &&  G_img_to_modify != B_img_to_modify){
-                    R_img_to_modify = 255;
-                    G_img_to_modify = 255;
-                    B_img_to_modify = 0;
-                }         
-            }
-            else if(R_img_text==255 && G_img_text==255 && B_img_text==255){
-                if(R_img_to_modify != G_img_to_modify && R_img_to_modify != B_img_to_modify &&  G_img_to_modify != B_img_to_modify){
-                    R_img_to_modify = 255;
-                    G_img_to_modify = 255;
-                    B_img_to_modify = 255;
+                if((R_img_to_modify < 10) && (R_img_to_modify_a<10) && (R_img_to_modify_b<10) && (R_img_to_modify_c<10) && (R_img_to_modify_d<10) && (R_img_to_modify_e>230)){
+                    circle(original_clone, Point(x,y), 20, CV_RGB(255,255,0), -1, 8, 0);
+                //    cout << "drawn circle !!" << endl;
                 }
             }
-            img_to_modify.at<cv::Vec3b>(i,j)[2] = R_img_to_modify;
-            img_to_modify.at<cv::Vec3b>(i,j)[1] = G_img_to_modify;
-            img_to_modify.at<cv::Vec3b>(i,j)[0] = B_img_to_modify;
+            else if(R_img_text!=0 && G_img_text!=0 && B_img_text!=0){
+                if((R_img_to_modify < 10) && (R_img_to_modify_a<10) && (R_img_to_modify_b<10) && (R_img_to_modify_c<10) && (R_img_to_modify_d<10) && (R_img_to_modify_e>230)){
+                    circle(original_clone, Point(x,y), 20, CV_RGB(255,255,255), -1, 8, 0);
+                //    cout << "drawn circle !!" << endl;
+                }
+            }
         }
-    imwrite( save_path.toStdString() + "test_small_image_new\\fax_.jpg", img_to_modify);
-*/    out << "temporary finish !!!" << endl;
+    }
+    imwrite( save_path2.toStdString() + "test_small_image_new\\fax_.jpg", original_clone);
+    out << "temporary finish !!!" << endl;
     waitKey(0);
 
     return a.exec();
