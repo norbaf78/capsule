@@ -9,9 +9,9 @@
 
 //#define DEBUG
 
-//da rifare con sotto commentato per solo queste date 2017-05-17  2018-05-29 2018-02-18
 
-#define IMAGES_ALREADY_AVAILABLE
+
+//#define IMAGES_ALREADY_AVAILABLE
 
 using namespace std;
 using namespace cv;
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         resize(image,image,size);//resize image
 
 /////////////////NEW/////NEW////////////////
-        image_small_clipped = image.clone();
+/*        image_small_clipped = image.clone();
         namedWindow( "image_small_clipped", WINDOW_AUTOSIZE );
         //set the callback function for any mouse event
         setMouseCallback("image_small_clipped", CallBackFunc, NULL);
@@ -120,15 +120,16 @@ int main(int argc, char *argv[])
             line(image, Point(circle_center_x-3,circle_center_y), Point(circle_center_x+3,circle_center_y), CV_RGB(0,0,0), 1, 8, 0);
             line(image, Point(circle_center_x,circle_center_y-3), Point(circle_center_x,circle_center_y+3), CV_RGB(0,0,0), 1, 8, 0);
 
-            cvtColor(crop,crop,CV_BGR2GRAY);
+      /*      cvtColor(crop,crop,CV_BGR2GRAY);
             cvtColor(crop,crop,CV_GRAY2BGR);
             putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
-                    minute.toStdString() + ":" + second.toStdString(), Point(11, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
+                    minute.toStdString() + ":" + second.toStdString(), Point(11, 145), FONT_HERSHEY_COMPLEX_SMALL, 0.5, CV_RGB(255,255,255), 0.9);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 7, CV_RGB(0,0,255), -1, 8, 0);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 4, CV_RGB(255,255,255), -1, 8, 0);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 7, CV_RGB(0,0,0), 1, 8, 0);
             line(crop, Point(circle_center_x_new-3,circle_center_y_new), Point(circle_center_x_new+3,circle_center_y_new), CV_RGB(0,0,0), 1, 8, 0);
             line(crop, Point(circle_center_x_new,circle_center_y_new-3), Point(circle_center_x_new,circle_center_y_new+3), CV_RGB(0,0,0), 1, 8, 0);
+*/
 #endif
 
 #ifndef DEBUG
@@ -142,32 +143,31 @@ int main(int argc, char *argv[])
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
 
-            putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" +
-                    minute.toStdString() + ":" + second.toStdString(), Point(10/*100*/, 145), FONT_HERSHEY_COMPLEX_SMALL, /*0.6*/0.5, CV_RGB(255,255,255), /*0.8*/0.9);
+      /*      putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " " + hour.toStdString() + ":" + minute.toStdString() + ":" + second.toStdString(), Point(10, 145), FONT_HERSHEY_COMPLEX_SMALL, 0.5, CV_RGB(255,255,255), 0.9);
             circle(crop, Point(circle_center_x_new,circle_center_y_new), 6, CV_RGB(255,255,255), -1, 8, 0);
-            //circle(crop, Point(circle_center_x_new,circle_center_y_new), 4, CV_RGB(0,0,0), -1, 8, 0);
-            //circle(crop, Point(circle_center_x_new,circle_center_y_new), 6, CV_RGB(0,0,0), 1, 8, 0);
+            circle(crop, Point(circle_center_x_new,circle_center_y_new), 4, CV_RGB(0,0,0), -1, 8, 0);
+            circle(crop, Point(circle_center_x_new,circle_center_y_new), 6, CV_RGB(0,0,0), 1, 8, 0);
             line(crop, Point(circle_center_x_new-5,circle_center_y_new), Point(circle_center_x_new+5,circle_center_y_new), CV_RGB(0,0,0), 1, 8, 0);
             line(crop, Point(circle_center_x_new,circle_center_y_new-5), Point(circle_center_x_new,circle_center_y_new+5), CV_RGB(0,0,0), 1, 8, 0);
             cvtColor(crop,crop,CV_BGR2GRAY);
-            cvtColor(crop,crop,CV_GRAY2BGR);
+            cvtColor(crop,crop,CV_GRAY2BGR);*/
 #endif
         }
         else{
 #ifdef DEBUG
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
-            cvtColor(crop,crop,CV_BGR2GRAY);
-            cvtColor(crop,crop,CV_GRAY2BGR);
+            //cvtColor(crop,crop,CV_BGR2GRAY);
+            //cvtColor(crop,crop,CV_GRAY2BGR);
 #endif
             cout << "no pills" << endl;
             putText(image, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(70, 250), FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255,255,255), 0.9);
-            putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(10, 145), FONT_HERSHEY_COMPLEX_SMALL, 0.5, CV_RGB(255,255,255), 0.9);
+            //putText(crop, year.toStdString() + "-" + month.toStdString() + "-" + day.toStdString() + " --:--:--", Point(10, 145), FONT_HERSHEY_COMPLEX_SMALL, 0.5, CV_RGB(255,255,255), 0.9);
 #ifndef DEBUG
             cvtColor(image,image,CV_BGR2GRAY);
             cvtColor(image,image,CV_GRAY2BGR);
-            cvtColor(crop,crop,CV_BGR2GRAY);
-            cvtColor(crop,crop,CV_GRAY2BGR);
+            //cvtColor(crop,crop,CV_BGR2GRAY);
+            //cvtColor(crop,crop,CV_GRAY2BGR);
 #endif
         }
 
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
         if(count>1000) randomValue += 20000;
         QString number = QString::number(randomValue);        
         imwrite( (save_path + number  + it.fileName()).toStdString() + ".jpg" , image );
-        imwrite( (save_path2 + number  + it.fileName()).toStdString() + ".jpg" , crop );
+        //imwrite( (save_path2 + number  + it.fileName()).toStdString() + ".jpg" , crop );
 
 
         count++;
@@ -225,6 +225,7 @@ int main(int argc, char *argv[])
     Mat big_image_new(2*border_pixel_new+(images_in_y*image_rows_new)+(images_in_y-1)*1, 2*border_pixel_new+(images_in_x*image_cols_new)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
 
 
+
     // first image è stato tolto C360 alla img originale per togliera dalla iterazione
 //    QString first_image_new = "2732_2015-04-02-08-37-49-922_org.jpg.jpg"; //
 //    image_small_new = imread((save_path2 + first_image).toStdString() ,CV_LOAD_IMAGE_COLOR);  // non viene trovata ???????
@@ -241,14 +242,13 @@ int main(int argc, char *argv[])
         QString month = it_bn_images_new.fileName().mid(index+6,2);
         QString day = it_bn_images_new.fileName().mid(index+9,2);
         out << year << " " << month << " " << day << endl;
-      //  const int last_year = 2017;
-      //  const int last_month = 12;
-      //  const int last_day = 27;
 
-        QDateTime last_day, current_image_day;
+        QDate last_day, current_image_day;
       // here we have to set the two QDateTime object to compare them (see below)
+        last_day.setDate(2017,11,27);
+        current_image_day.setDate(year.toInt(),month.toInt(),day.toInt());
 
-        if(last_day < current_image_day){ // here I want verify the actual image is part of the first 1000 images I am using
+        if(current_image_day < last_day){ // here I want verify the actual image is part of the first 1000 images I am using
             cout << "---" << it_bn_images_new.fileName().toStdString() << "  " << endl;
             image_small_new = imread(it_bn_images_new.filePath().toStdString(),CV_LOAD_IMAGE_COLOR);
             out << "index_x: " << index_x << " index_y: " << index_y << "   -    " << "image_smallcols: " << image_small_new.cols << "  -  " << "image_smallrows: " << image_small_new.rows << endl;
@@ -265,7 +265,6 @@ int main(int argc, char *argv[])
         }
     cout << "index_x: " << index_x << " - index_y: " << index_y << endl;
     }
-cv::waitKey(0);
 
     // last image è stato tolto C360 alla img originale per togliera dalla iterazione
 //    QString last_image_new = "1828_2017-05-10-07-09-46-801_org.jpg.jpg"; // è stato tolto C360 alla img originale per togliera dalla iterazione
