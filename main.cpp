@@ -49,6 +49,9 @@ int main(int argc, char *argv[])
     const int circle_center_y_new = 30;
     const int dimension_x =(int)150;
     const int dimension_y =(int)150;
+    const QString last_year = "2017";
+    const QString last_month = "12";
+    const QString last_day = "27";
     QString save_path = "C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_\\";
     QString save_path2 = "C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_new\\";
     QDirIterator it("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\Google Foto", QStringList() << "*_org.jpg", QDir::Files, QDirIterator::Subdirectories);
@@ -238,9 +241,14 @@ int main(int argc, char *argv[])
         QString month = it_bn_images_new.fileName().mid(index+6,2);
         QString day = it_bn_images_new.fileName().mid(index+9,2);
         out << year << " " << month << " " << day << endl;
+      //  const int last_year = 2017;
+      //  const int last_month = 12;
+      //  const int last_day = 27;
 
+        QDateTime last_day, current_image_day;
+      // here we have to set the two QDateTime object to compare them (see below)
 
-        if(true){ // here I want verify the actual image is part of the first 1000 images I am using
+        if(last_day < current_image_day){ // here I want verify the actual image is part of the first 1000 images I am using
             cout << "---" << it_bn_images_new.fileName().toStdString() << "  " << endl;
             image_small_new = imread(it_bn_images_new.filePath().toStdString(),CV_LOAD_IMAGE_COLOR);
             out << "index_x: " << index_x << " index_y: " << index_y << "   -    " << "image_smallcols: " << image_small_new.cols << "  -  " << "image_smallrows: " << image_small_new.rows << endl;
@@ -251,12 +259,13 @@ int main(int argc, char *argv[])
                 index_y++;
                 index_x=0;
             }
-            if(index_y>images_in_y-1)
-                images_completed = true;
+           // if(index_y>images_in_y-1)
+            //    images_completed = true;
             counter++;
         }
-    }
     cout << "index_x: " << index_x << " - index_y: " << index_y << endl;
+    }
+cv::waitKey(0);
 
     // last image è stato tolto C360 alla img originale per togliera dalla iterazione
 //    QString last_image_new = "1828_2017-05-10-07-09-46-801_org.jpg.jpg"; // è stato tolto C360 alla img originale per togliera dalla iterazione
