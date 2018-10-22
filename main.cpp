@@ -6,12 +6,13 @@
 #include <QString>
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <QFile>
 
 //#define DEBUG
 
 
 
-//#define IMAGES_ALREADY_AVAILABLE
+#define IMAGES_ALREADY_AVAILABLE
 
 using namespace std;
 using namespace cv;
@@ -225,15 +226,19 @@ int main(int argc, char *argv[])
     Mat big_image_new(2*border_pixel_new+(images_in_y*image_rows_new)+(images_in_y-1)*1, 2*border_pixel_new+(images_in_x*image_cols_new)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
 
 
-
     // first image è stato tolto C360 alla img originale per togliera dalla iterazione
-//    QString first_image_new = "2732_2015-04-02-08-37-49-922_org.jpg.jpg"; //
-//    image_small_new = imread((save_path2 + first_image).toStdString() ,CV_LOAD_IMAGE_COLOR);  // non viene trovata ???????
-//    image_small_new.copyTo(big_image(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel_new+index_y*(image_rows_new+1),image_small_new.cols, image_small.rows)));
-//    index_x++;
-//    counter++;
+    QString first_image_new = "2082----_2015-04-02-08-37-49-922_org.jpg.jpg"; //
+    cout << (save_path2 + first_image_new).toStdString() << endl;
+    image_small_new = imread((save_path2 + first_image_new).toStdString() ,CV_LOAD_IMAGE_COLOR);
+    image_small_new.copyTo(big_image_new(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel_new+index_y*(image_rows_new+1),image_small_new.cols, image_small_new.rows)));
+    index_x++;
+    counter++;
 
-    index_x = index_y = 0;
+    QString filename_images_available = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\20_09_2018_pastiglie\\images.txt";
+    QFile file(filename_images_available);
+    file.open(QIODevice::WriteOnly);
+    QTextStream stream(&file);
+
     QDirIterator it_bn_images_new("C:\\Users\\Fabio Roncato\\Documents\\Photo\\Cell\\Takeout\\saved_image_new", QStringList() << "*C360*.jpg", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     while (it_bn_images_new.hasNext() && images_completed==false){
         it_bn_images_new.next();
@@ -242,13 +247,15 @@ int main(int argc, char *argv[])
         QString month = it_bn_images_new.fileName().mid(index+6,2);
         QString day = it_bn_images_new.fileName().mid(index+9,2);
         out << year << " " << month << " " << day << endl;
+        stream << endl << year << "-" << month << "-" << day << ",  " << it_bn_images_new.fileName();
 
         QDate last_day, current_image_day;
       // here we have to set the two QDateTime object to compare them (see below)
-        last_day.setDate(2017,11,27);
+        last_day.setDate(2017,12,26);
         current_image_day.setDate(year.toInt(),month.toInt(),day.toInt());
 
         if(current_image_day < last_day){ // here I want verify the actual image is part of the first 1000 images I am using
+            stream << "*";
             cout << "---" << it_bn_images_new.fileName().toStdString() << "  " << endl;
             image_small_new = imread(it_bn_images_new.filePath().toStdString(),CV_LOAD_IMAGE_COLOR);
             out << "index_x: " << index_x << " index_y: " << index_y << "   -    " << "image_smallcols: " << image_small_new.cols << "  -  " << "image_smallrows: " << image_small_new.rows << endl;
@@ -259,20 +266,21 @@ int main(int argc, char *argv[])
                 index_y++;
                 index_x=0;
             }
-           // if(index_y>images_in_y-1)
-            //    images_completed = true;
+            if(index_y>images_in_y-1)
+                images_completed = true;
             counter++;
         }
-    cout << "index_x: " << index_x << " - index_y: " << index_y << endl;
+        cout << "index_x: " << index_x << " - index_y: " << index_y << endl;
     }
+    file.close();
 
-    // last image è stato tolto C360 alla img originale per togliera dalla iterazione
-//    QString last_image_new = "1828_2017-05-10-07-09-46-801_org.jpg.jpg"; // è stato tolto C360 alla img originale per togliera dalla iterazione
-//    image_small_new = imread((save_path2 + last_image).toStdString() ,CV_LOAD_IMAGE_COLOR);
-//    image_small_new.copyTo(big_image_new(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel_new+index_y*(image_rows_new+1),image_small.cols, image_small_new.rows)));
-//    index_y++;
-//    index_x=0;
-//    counter++;
+    // a last image è stato tolto C360 alla img originale per togliera dalla iterazione
+    QString last_image_new = "3212----_2017-12-27-07-08-29-853_org.jpg.jpg"; // è stato tolto C360 alla img originale per togliera dalla iterazione
+    image_small_new = imread((save_path2 + last_image_new).toStdString() ,CV_LOAD_IMAGE_COLOR);
+    image_small_new.copyTo(big_image_new(cv::Rect(border_pixel_new+index_x*(image_cols_new+1),border_pixel_new+index_y*(image_rows_new+1),image_small_new.cols, image_small_new.rows)));
+    index_y++;
+    index_x=0;
+    counter++;
 
 
     cout << save_path2.toStdString() + "test_small_image_new\\big_image_.jpg" << endl;
@@ -330,14 +338,16 @@ int main(int argc, char *argv[])
 
             if(R_img_text==0 && G_img_text==0 && B_img_text==0){
                 if((R_img_to_modify < 10) && (R_img_to_modify_a<10) && (R_img_to_modify_b<10) && (R_img_to_modify_c<10) && (R_img_to_modify_d<10) && (R_img_to_modify_e>230)){
-                    circle(original_clone, Point(x,y), 20, CV_RGB(255,255,0), -1, 8, 0);
-                //    cout << "drawn circle !!" << endl;
+                    circle(original_clone, Point(x,y), 5, CV_RGB(255,255,0), -1, 8, 0);
+                    line(original_clone, Point(x-3,y), Point(x+3,y), CV_RGB(0,0,0), 1, 8, 0);
+                    line(original_clone, Point(x,y-3), Point(x,y+3), CV_RGB(0,0,0), 1, 8, 0);
                 }
             }
             else if(R_img_text!=0 && G_img_text!=0 && B_img_text!=0){
                 if((R_img_to_modify < 10) && (R_img_to_modify_a<10) && (R_img_to_modify_b<10) && (R_img_to_modify_c<10) && (R_img_to_modify_d<10) && (R_img_to_modify_e>230)){
-                    circle(original_clone, Point(x,y), 20, CV_RGB(255,255,255), -1, 8, 0);
-                //    cout << "drawn circle !!" << endl;
+                    circle(original_clone, Point(x,y), 5, CV_RGB(255,255,255), -1, 8, 0);
+                    line(original_clone, Point(x-3,y), Point(x+3,y), CV_RGB(0,0,0), 1, 8, 0);
+                    line(original_clone, Point(x,y-3), Point(x,y+3), CV_RGB(0,0,0), 1, 8, 0);
                 }
             }
         }
