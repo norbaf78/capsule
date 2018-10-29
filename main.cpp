@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     const int images_in_x = 40;
     const int images_in_y =25;
     const int border_pixel = 257;    //   257:44(mm) = 170:x(mm) -> 30mm
-    const int border_pixel_new = 170;  // 170:30(mm) = 12:x(mm) -> 2mm
+    const int border_pixel_new = 170;  // 170:30(mm) = 12:x(mm) -> 2.1mm
     const int circle_center_x = 58;
     const int circle_center_y = 58;
     const int circle_center_x_new = 30;
@@ -337,14 +337,14 @@ int main(int argc, char *argv[])
 
 
             if(R_img_text==0 && G_img_text==0 && B_img_text==0){
-                if((R_img_to_modify < 10) && (R_img_to_modify_a<10) && (R_img_to_modify_b<10) && (R_img_to_modify_c<10) && (R_img_to_modify_d<10) && (R_img_to_modify_e>230)){
+                if((R_img_to_modify < 15) && (R_img_to_modify_a<15) && (R_img_to_modify_b<15) && (R_img_to_modify_c<15) && (R_img_to_modify_d<15) && (R_img_to_modify_e>230)){
                     circle(original_clone, Point(x,y), 5, CV_RGB(255,255,0), -1, 8, 0);
                     line(original_clone, Point(x-3,y), Point(x+3,y), CV_RGB(0,0,0), 1, 8, 0);
                     line(original_clone, Point(x,y-3), Point(x,y+3), CV_RGB(0,0,0), 1, 8, 0);
                 }
             }
             else if(R_img_text!=0 && G_img_text!=0 && B_img_text!=0){
-                if((R_img_to_modify < 10) && (R_img_to_modify_a<10) && (R_img_to_modify_b<10) && (R_img_to_modify_c<10) && (R_img_to_modify_d<10) && (R_img_to_modify_e>230)){
+                if((R_img_to_modify < 15) && (R_img_to_modify_a<15) && (R_img_to_modify_b<15) && (R_img_to_modify_c<15) && (R_img_to_modify_d<15) && (R_img_to_modify_e>230)){
                     circle(original_clone, Point(x,y), 5, CV_RGB(255,255,255), -1, 8, 0);
                     line(original_clone, Point(x-3,y), Point(x+3,y), CV_RGB(0,0,0), 1, 8, 0);
                     line(original_clone, Point(x,y-3), Point(x,y+3), CV_RGB(0,0,0), 1, 8, 0);
