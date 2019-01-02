@@ -1,0 +1,3 @@
+giorno inizio e giorno fine (totale giorni da calcolare)
+trovare dimensioni box quadrati ottimale che coprano dimensioni immagine
+per ogni quadrato la data

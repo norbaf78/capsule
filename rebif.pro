@@ -3,7 +3,7 @@ QT -= gui
 
 CONFIG += c++11
 
-TARGET = pastiglie
+TARGET = rebif
 CONFIG += console
 CONFIG -= app_bundle
 
