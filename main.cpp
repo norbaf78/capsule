@@ -8,26 +8,21 @@
 #include <numeric>
 #include <opencv2/opencv.hpp>
 #include <QFile>
+#include <QDate>
 
 using namespace std;
 using namespace cv;
 
-
-int mcm(int a,int b){ // a > b
-   while(a!=b){
-    if(a>b)a-=b;
-    else b-=a;
-   }
-   return a;
-}
 
 int main(int argc, char *argv[])
 
 {
     QCoreApplication a(argc, argv);
 
-    const int boxInX = 160;
-    const int boxInY = 90;
+    const int boxInX = 40;
+    const int boxInY = 20;
+    QDate startingDay(2010, 5, 17);
+    QDate endingDay(2013, 5, 4);
 
     QString imgPath = "C:\\Users\\Fabio Roncato\\OneDrive\\Immagini\\Importazioni fotocamera\\2016-04-19\\20150103_134557.jpg";
     Mat image = imread(imgPath.toStdString(),CV_LOAD_IMAGE_COLOR);
@@ -46,36 +41,51 @@ int main(int argc, char *argv[])
     // cycle on all the small square
     for(int lineX = 0; lineX < boxInX; lineX++){
         for(int lineY = 0; lineY < boxInY; lineY++){
-            // cycle on all the pixels inside the small square for find the average value
-            int green = 0;
-            int red = 0;
-            int blue = 0;
-            int pixelCount=0;
-            for(int newX = 0; newX < dimBoxInX; newX++){ // inside the small box
-                for(int newY = 0; newY < dimBoxInY; newY++){ // inside the small box
-                    Vec3b colorPixel = image.at<Vec3b>(Point(lineX*dimBoxInX+newX,lineY*dimBoxInY+newY));
-                    blue += colorPixel[0];
-                    green += colorPixel[1];
-                    red += colorPixel[2];
-                    pixelCount++;
-                  //  cout << "blue " << blue << " - green " << green << " - red " << red << " - pixelCount " << pixelCount << endl;
-                }
-            }
-            blue = blue/pixelCount;
-            green = green/pixelCount;
-            red = green/pixelCount;
-        //    cout << "blue " << blue << " - green " << green << " - red " << red << endl;
 
-            // cycle on all the pixels inside the small square for set the average value
-            for(int newX = 1; newX < dimBoxInX; newX++){ // inside the small box
-                for(int newY = 1; newY < dimBoxInY; newY++){ // inside the small box
-                    newImage.at<Vec3b>(Point(lineX*dimBoxInX+newX,lineY*dimBoxInY+newY))[0] = blue;
-                    newImage.at<Vec3b>(Point(lineX*dimBoxInX+newX,lineY*dimBoxInY+newY))[1] = green;
-                    newImage.at<Vec3b>(Point(lineX*dimBoxInX+newX,lineY*dimBoxInY+newY))[2] = red;
-                }
-            }
         }
     }
+
+/*    int daysBetweenDate = endingDay.toJulianDay() - startingDay.toJulianDay();
+    QDate currentDay = startingDay;
+    for(int i=0;i<daysBetweenDate;i++){
+        cout << currentDay.toString(Qt::ISODate).toStdString() << " yes" << endl;
+        currentDay = currentDay.addDays(1);
+    }
+    cout << "Days between date: " << daysBetweenDate << endl;
+*/
+    cout << QDir::currentPath().toStdString() << endl;
+
+    QFile file("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\date.txt");
+    if(!file.open(QFile::ReadOnly|QFile::Text))
+        cout << "No file found" << endl;
+
+    QStringList data;
+    QStringList iniezione;
+    QStringList posizione;
+    while ( !file.atEnd() ) {
+      QString line = file.readLine();
+      QStringList list = line.split(" ");
+      QString dateString = list[0];
+      QString yesOrNo = list[1];
+      QString position = list[2];
+      data.append(dateString);
+      iniezione.append(yesOrNo);
+      posizione.append(position);
+      //cout << dateString.toStdString() << " - " << yesOrNo.toStdString() << " - " << position.toStdString();
+    }
+
+    cout << endl;
+    cout << "data elements: " << data.count() << endl;
+    cout << "iniezione elements: " << iniezione.count() << endl;
+    cout << "posizione elements: " << posizione.count() << endl;
+
+    int countInjection=0;
+    for(int i=0;i< data.count(); i++){
+        //cout << iniezione[i].toStdString() << " " << countInjection << endl;
+        if(iniezione[i].compare("yes") == 0)
+            countInjection++;
+    }
+    cout << "Injection done: " << countInjection << endl;
 
     Size size(image.cols/2, image.rows/2);
     Mat imageResized;
@@ -88,7 +98,6 @@ int main(int argc, char *argv[])
     namedWindow( "newResize", WINDOW_AUTOSIZE );
     imshow( "newResize", newImageResized );
 
-    cout << "mcm(" << image.cols << "," << image.rows << "): " << mcm(image.cols,image.rows) << endl;
     cout << "temporary finish !!!" << endl;
     waitKey(0);
 
