@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    const int boxInX = 40;
-    const int boxInY = 20;
+    const int boxInX = 19;
+    const int boxInY = 57;
     QDate startingDay(2010, 5, 17);
     QDate endingDay(2013, 5, 4);
 
@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
     cout << "Days between date: " << daysBetweenDate << endl;
 */
     cout << QDir::currentPath().toStdString() << endl;
-
     QFile file("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\date.txt");
     if(!file.open(QFile::ReadOnly|QFile::Text))
         cout << "No file found" << endl;
@@ -71,7 +70,7 @@ int main(int argc, char *argv[])
       data.append(dateString);
       iniezione.append(yesOrNo);
       posizione.append(position);
-      //cout << dateString.toStdString() << " - " << yesOrNo.toStdString() << " - " << position.toStdString();
+      cout << dateString.toStdString() << " - " << yesOrNo.toStdString() << " - " << position.toStdString() << endl;
     }
 
     cout << endl;
@@ -79,13 +78,40 @@ int main(int argc, char *argv[])
     cout << "iniezione elements: " << iniezione.count() << endl;
     cout << "posizione elements: " << posizione.count() << endl;
 
-    int countInjection=0;
+    int countInjection_a=0;
+    int countInjection_b=0;
     for(int i=0;i< data.count(); i++){
         //cout << iniezione[i].toStdString() << " " << countInjection << endl;
         if(iniezione[i].compare("yes") == 0)
-            countInjection++;
+            countInjection_a++;
+        if(posizione[i].compare("0") != 0)
+            countInjection_b++;
     }
-    cout << "Injection done: " << countInjection << endl;
+    cout << "Injection done-: " << countInjection_a << " - " << countInjection_b << endl;
+    cout << data.count() << endl;
+
+    QString imageBody;
+    for(int i=0;i< data.count(); i++){
+        QString dayDate = data[i];
+        QString position;
+        if(iniezione[i].compare("yes") == 0)
+            position = posizione[i];
+        else
+            position = "0";
+        if(iniezione[i].compare("yes") == 0) // iniezione effettuata
+            if(position.toInt()< 19)
+                imageBody = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\injectionSite_front_" + position + ".png";
+            else
+                imageBody = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\injectionSite_back_" +  position + ".png";
+        if(position.toInt()!= 0){
+            cout << imageBody.toStdString() << "  " << dayDate.toStdString() << endl;
+            Mat currentImageBody = imread(imageBody.toStdString(),CV_LOAD_IMAGE_COLOR);
+            putText(currentImageBody, dayDate.toStdString(), Point(100,100), FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(0,0,0), 0.9 );
+            imshow( "imageBody", currentImageBody );
+            waitKey(0);
+        }
+    }
+
 
     Size size(image.cols/2, image.rows/2);
     Mat imageResized;
