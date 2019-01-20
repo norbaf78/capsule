@@ -19,19 +19,20 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    const int boxInX = 19;
-    const int boxInY = 57;
-    int imageDimension = 401;
+    const int images_in_x = 57;
+    const int images_in_y =19;
+    const int border_pixel = 400;
+    const int imageDimension = 401;
     QDate startingDay(2010, 5, 17);
     QDate endingDay(2013, 5, 4);
 
     QString imgPath = "C:\\Users\\Fabio Roncato\\OneDrive\\Immagini\\Importazioni fotocamera\\2016-04-19\\20150103_134557.jpg";
     Mat image = imread(imgPath.toStdString(),CV_LOAD_IMAGE_COLOR);
-    int dimBoxInX = image.cols/boxInX;
-    int dimBoxInY = image.rows/boxInY;
-    for(int lineX = 1; lineX < boxInX; lineX++)
+    int dimBoxInX = image.cols/images_in_x;
+    int dimBoxInY = image.rows/images_in_y;
+    for(int lineX = 1; lineX < images_in_x; lineX++)
         line(image, Point(lineX*dimBoxInX,0), Point(lineX*dimBoxInX,image.rows), CV_RGB(255,255,255), 1, 8, 0);
-    for(int lineY = 1; lineY < boxInY; lineY++)
+    for(int lineY = 1; lineY < images_in_y; lineY++)
         line(image, Point(0,lineY*dimBoxInY), Point(image.cols, lineY*dimBoxInY), CV_RGB(255,255,255), 1, 8, 0);
 
     Mat newImage(image.rows, image.cols, image.type(), Scalar(0,0,0));
@@ -86,6 +87,13 @@ int main(int argc, char *argv[])
     cout << "Injection done: " << countInjectionDone << endl;
     cout << "Total days: " << data.count() << endl;
 
+
+
+
+    int index_x=0, index_y=0;
+    Mat big_image_new(2*border_pixel+(images_in_y*imageDimension)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*imageDimension)+(images_in_x-1)*1, CV_8UC3, Scalar(255,255,255));
+
+
     int circleRadious = imageDimension/6;
     // create an image
     QString filenameCurrentImageBody;
@@ -95,12 +103,12 @@ int main(int argc, char *argv[])
         dayDate = data[i];
         if(iniezione[i].compare("yes") == 0){ // iniezione effettuata
             position = posizione[i];
-            if(position.toInt() != 0 && position.toInt()< 19)
+            if(position.toInt() != 0 && position.toInt()< 19) // effettuata frontalmente
                 filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_front_" + position + ".png";
-            else if(position.toInt() != 0 && position.toInt()>= 19)
+            else if(position.toInt() != 0 && position.toInt()>= 19) // effettuata posteriormente
                 filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_back_" +  position + ".png";
         }
-        else{
+        else{ // iniezione non effettuata
             position="0";
             filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_0.png";
         }
@@ -112,9 +120,17 @@ int main(int argc, char *argv[])
             circle(currentImageBody, Point((imageDimension-1)/2, (imageDimension-1)/2), circleRadious, CV_RGB(0,0,0), 2 , 8, 0);
         }
 
+        currentImageBody.copyTo(big_image_new(cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension)));
         imshow( "imageBody", currentImageBody );
-        waitKey(0);
+        //waitKey(0);
+
+        index_x++;
+        if(index_x>images_in_x-1){
+            index_y++;
+            index_x=0;
+        }
     }
+    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif.jpg" , big_image_new );
 
 
 
