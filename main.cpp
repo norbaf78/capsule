@@ -25,9 +25,13 @@ int main(int argc, char *argv[])
     const int imageDimension = 401;
     QDate startingDay(2010, 5, 17);
     QDate endingDay(2013, 5, 4);
+ /* old code
 
+    // source image
     QString imgPath = "C:\\Users\\Fabio Roncato\\OneDrive\\Immagini\\Importazioni fotocamera\\2016-04-19\\20150103_134557.jpg";
     Mat image = imread(imgPath.toStdString(),CV_LOAD_IMAGE_COLOR);
+
+
     int dimBoxInX = image.cols/images_in_x;
     int dimBoxInY = image.rows/images_in_y;
     for(int lineX = 1; lineX < images_in_x; lineX++)
@@ -36,6 +40,8 @@ int main(int argc, char *argv[])
         line(image, Point(0,lineY*dimBoxInY), Point(image.cols, lineY*dimBoxInY), CV_RGB(255,255,255), 1, 8, 0);
 
     Mat newImage(image.rows, image.cols, image.type(), Scalar(0,0,0));
+*/
+
 
 // // cycle on all the small square
 //    for(int lineX = 0; lineX < boxInX; lineX++){
@@ -43,7 +49,6 @@ int main(int argc, char *argv[])
 //
 //        }
 //    }
-
 // // this part of the code create the list of days between two dates (this data are now available inside date.txt file)
 //    int daysBetweenDate = endingDay.toJulianDay() - startingDay.toJulianDay();
 //    QDate currentDay = startingDay;
@@ -53,7 +58,12 @@ int main(int argc, char *argv[])
 //    }
 //    cout << "Days between date: " << daysBetweenDate << endl;
 
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////
     // open file with information of date, injection yes or no, point of injection (if done)
+    ////////////////////////////////////////////////////////////////////////////////////
     QFile file("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\date.txt");
     if(!file.open(QFile::ReadOnly|QFile::Text))
         cout << "No file found" << endl;
@@ -89,7 +99,9 @@ int main(int argc, char *argv[])
 
 
 
-
+    ////////////////////////////////////////////////////////////////////////////////////
+    /// create an image containing a number of days images (imageDimension is the dimenion of the images)
+    ///////////////////////////////////////////////////////////////////////////////////////
     int index_x=0, index_y=0;
     Mat big_image_new(2*border_pixel+(images_in_y*imageDimension)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*imageDimension)+(images_in_x-1)*1, CV_8UC3, Scalar(0,0,0));
     Mat big_image_new_gray, big_image_new_gray_inverse;
@@ -100,6 +112,7 @@ int main(int argc, char *argv[])
     QString dayDate;
     QString position;
     for(int i=0;i< data.count(); i++){
+        // selectiong which image(different type depending if injection done and where) take
         dayDate = data[i];
         if(iniezione[i].compare("yes") == 0){ // iniezione effettuata
             position = posizione[i];
@@ -113,6 +126,7 @@ int main(int argc, char *argv[])
             filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_0.png";
         }
         //cout << "path: " << filenameCurrentImageBody.toStdString() << endl;
+        // image has been selected and now circle needle and date will be added
         Mat currentImageBody = imread(filenameCurrentImageBody.toStdString(),CV_LOAD_IMAGE_COLOR);
         if(position.toInt() != 0){
             putText(currentImageBody, dayDate.toStdString(), Point(imageDimension/12,imageDimension-60), FONT_HERSHEY_TRIPLEX , 1.7, CV_RGB(0,0,0), 1.0 );
@@ -120,10 +134,11 @@ int main(int argc, char *argv[])
             circle(currentImageBody, Point((imageDimension-1)/2, (imageDimension-1)/2), circleRadious, CV_RGB(0,0,0), -2 , 8, 0);
         }
 
+        // new imahe created with circle needle and date is added to compose the big one
         currentImageBody.copyTo(big_image_new(cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension)));
         imshow( "imageBody", currentImageBody );
-        //waitKey(0);
 
+        // ending one line of the big image we will pass to the next one
         index_x++;
         if(index_x>images_in_x-1){
             index_y++;
@@ -131,14 +146,15 @@ int main(int argc, char *argv[])
         }
     }
 
+    // create the gray image of he one just created
     cv::cvtColor(big_image_new, big_image_new_gray, CV_BGR2GRAY);
     big_image_new_gray_inverse = 255 - big_image_new_gray;
     cv::threshold(big_image_new_gray_inverse,big_image_new_gray_inverse,1,255,cv::THRESH_BINARY);
-    big_image_new_gray = 255-big_image_new_gray_inverse;
+//    big_image_new_gray = 255-big_image_new_gray_inverse;
 
     imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_color.jpg" , big_image_new );
     imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_gray.jpg" , big_image_new_gray );
-    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_gray_inverse.jpg" , big_image_new_gray_inverse );
+//    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_gray_inverse.jpg" , big_image_new_gray_inverse );
 
     QString final_image = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\test_image.jpg";
     Mat test_image = imread(final_image.toStdString(),CV_LOAD_IMAGE_COLOR);
@@ -146,7 +162,7 @@ int main(int argc, char *argv[])
     test_image.copyTo(outputMat, big_image_new_gray);
     imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\outputMat.jpg" , outputMat );
 
-
+/*
     Size size(image.cols/2, image.rows/2);
     Mat imageResized;
     resize(image,imageResized,size);//resize image
@@ -157,6 +173,7 @@ int main(int argc, char *argv[])
     resize(newImage,newImageResized,size);//resize image
     namedWindow( "newResize", WINDOW_AUTOSIZE );
     imshow( "newResize", newImageResized );
+*/
 
     cout << "temporary finish !!!" << endl;
     waitKey(0);
