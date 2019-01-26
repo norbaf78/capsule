@@ -25,40 +25,6 @@ int main(int argc, char *argv[])
     const int imageDimension = 401;
     QDate startingDay(2010, 5, 17);
     QDate endingDay(2013, 5, 4);
- /* old code
-
-    // source image
-    QString imgPath = "C:\\Users\\Fabio Roncato\\OneDrive\\Immagini\\Importazioni fotocamera\\2016-04-19\\20150103_134557.jpg";
-    Mat image = imread(imgPath.toStdString(),CV_LOAD_IMAGE_COLOR);
-
-
-    int dimBoxInX = image.cols/images_in_x;
-    int dimBoxInY = image.rows/images_in_y;
-    for(int lineX = 1; lineX < images_in_x; lineX++)
-        line(image, Point(lineX*dimBoxInX,0), Point(lineX*dimBoxInX,image.rows), CV_RGB(255,255,255), 1, 8, 0);
-    for(int lineY = 1; lineY < images_in_y; lineY++)
-        line(image, Point(0,lineY*dimBoxInY), Point(image.cols, lineY*dimBoxInY), CV_RGB(255,255,255), 1, 8, 0);
-
-    Mat newImage(image.rows, image.cols, image.type(), Scalar(0,0,0));
-*/
-
-
-// // cycle on all the small square
-//    for(int lineX = 0; lineX < boxInX; lineX++){
-//        for(int lineY = 0; lineY < boxInY; lineY++){
-//
-//        }
-//    }
-// // this part of the code create the list of days between two dates (this data are now available inside date.txt file)
-//    int daysBetweenDate = endingDay.toJulianDay() - startingDay.toJulianDay();
-//    QDate currentDay = startingDay;
-//    for(int i=0;i<daysBetweenDate;i++){
-//        cout << currentDay.toString(Qt::ISODate).toStdString() << " yes" << endl;
-//        currentDay = currentDay.addDays(1);
-//    }
-//    cout << "Days between date: " << daysBetweenDate << endl;
-
-
 
 
     ////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +62,6 @@ int main(int argc, char *argv[])
     }
     cout << "Injection done: " << countInjectionDone << endl;
     cout << "Total days: " << data.count() << endl;
-
 
 
     ////////////////////////////////////////////////////////////////////////////////////
@@ -150,11 +115,9 @@ int main(int argc, char *argv[])
     cv::cvtColor(big_image_new, big_image_new_gray, CV_BGR2GRAY);
     big_image_new_gray_inverse = 255 - big_image_new_gray;
     cv::threshold(big_image_new_gray_inverse,big_image_new_gray_inverse,1,255,cv::THRESH_BINARY);
-//    big_image_new_gray = 255-big_image_new_gray_inverse;
 
     imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_color.jpg" , big_image_new );
     imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_gray.jpg" , big_image_new_gray );
-//    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_gray_inverse.jpg" , big_image_new_gray_inverse );
 
     QString final_image = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\test_image.jpg";
     Mat test_image = imread(final_image.toStdString(),CV_LOAD_IMAGE_COLOR);
@@ -162,18 +125,6 @@ int main(int argc, char *argv[])
     test_image.copyTo(outputMat, big_image_new_gray);
     imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\outputMat.jpg" , outputMat );
 
-/*
-    Size size(image.cols/2, image.rows/2);
-    Mat imageResized;
-    resize(image,imageResized,size);//resize image
-    namedWindow( "resize", WINDOW_AUTOSIZE );
-    imshow( "resize", imageResized );
-
-    Mat newImageResized;
-    resize(newImage,newImageResized,size);//resize image
-    namedWindow( "newResize", WINDOW_AUTOSIZE );
-    imshow( "newResize", newImageResized );
-*/
 
     cout << "temporary finish !!!" << endl;
     waitKey(0);
