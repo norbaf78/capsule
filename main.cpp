@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
     cv::cvtColor(big_image_new, big_image_new_gray, CV_BGR2GRAY);
     big_image_new_gray_inverse = 255 - big_image_new_gray;
     cv::threshold(big_image_new_gray_inverse,big_image_new_gray_inverse,1,255,cv::THRESH_BINARY);
+    big_image_new_gray = 255-big_image_new_gray_inverse;
 
     imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_color.jpg" , big_image_new );
     imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_gray.jpg" , big_image_new_gray );
