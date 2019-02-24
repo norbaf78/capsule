@@ -70,8 +70,15 @@ int main(int argc, char *argv[])
     ///////////////////////////////////////////////////////////////////////////////////////
     int index_x=0, index_y=0;
     Mat big_image_new(2*border_pixel+(images_in_y*imageDimension)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*imageDimension)+(images_in_x-1)*1, CV_8UC3, Scalar(0,0,0));
-    Mat big_image_new_test(2*border_pixel+(images_in_y*imageDimension)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*imageDimension)+(images_in_x-1)*1, CV_8UC3, Scalar(0,0,0));
-    Mat big_image_new_gray, big_image_new_gray_inverse;
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    /// load the original image
+    ///////////////////////////////////////////////////////////////////////////////////////
+    QString final_image = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\test_image.jpg";
+    Mat test_image = imread(final_image.toStdString(),CV_LOAD_IMAGE_COLOR);
+    Mat test_image_gray;
+    cv::cvtColor(test_image, test_image_gray, CV_BGR2GRAY);
+    cv::cvtColor(test_image_gray, test_image, CV_GRAY2BGR);
 
     int circleRadious = imageDimension/6;
     // create an image
@@ -79,86 +86,52 @@ int main(int argc, char *argv[])
     QString dayDate;
     QString position;
     for(int i=0;i< data.count(); i++){
-        // selectiong which image(different type depending if injection done and where) take
+        /////////////////////////////////////////////////////////////////////////
+        // generating which image(different type depending if injection done and where) take
+        /////////////////////////////////////////////////////////////////////////
         dayDate = data[i];
         if(iniezione[i].compare("yes") == 0){ // iniezione effettuata
             position = posizione[i];
             if(position.toInt() != 0 && position.toInt()< 19) // effettuata frontalmente
-                filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_front_" + position + ".png";
+                filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension2\\injectionSite_front_" + position + ".png";
             else if(position.toInt() != 0 && position.toInt()>= 19) // effettuata posteriormente
-                filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_back_" +  position + ".png";
+                filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension2\\injectionSite_back_" +  position + ".png";
         }
         else{ // iniezione non effettuata
             position="0";
-            filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_0.png";
+            filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension2\\injectionSite_0.png";
         }
-        //cout << "path: " << filenameCurrentImageBody.toStdString() << endl;
-        // image has been selected and now circle needle and date will be added
+        //image has been selected and now circle needle and date will be added
         Mat currentImageBody = imread(filenameCurrentImageBody.toStdString(),CV_LOAD_IMAGE_COLOR);
         if(position.toInt() != 0){
             putText(currentImageBody, dayDate.toStdString(), Point(imageDimension/12,imageDimension-60), FONT_HERSHEY_TRIPLEX , 1.7, CV_RGB(0,0,0), 2.0 );
-            //putText(Mat& img, const string& text, Point org, int fontFace, double fontScale, Scalar color, int thickness=1, int lineType=8, bool bottomLeftOrigin=false )
-            // draw circle in center
             circle(currentImageBody, Point((imageDimension-1)/2, (imageDimension-1)/2), circleRadious, CV_RGB(240,240,240), -2 , 8, 0);
-        }                                                                                            //  CV_RGB(240,240,240)
-
-        // new imahe created with circle needle and date is added to compose the big one
-        currentImageBody.copyTo(big_image_new(cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension)));
-        imshow( "imageBody", currentImageBody );
-       // waitKey(0);
-
-        // ending one line of the big image we will pass to the next one
-        index_x++;
-        if(index_x>images_in_x-1){
-            index_y++;
-            index_x=0;
         }
-    }
-
-    // this image is 24 bit image 3 channel
-    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_color.jpg" , big_image_new );
-
-    // create the gray image of the one just created
-    cv::cvtColor(big_image_new, big_image_new_gray, CV_BGR2GRAY);
-    big_image_new_gray_inverse = 255 - big_image_new_gray;
-
-    cv::threshold(big_image_new_gray_inverse,big_image_new_gray_inverse,1,255,cv::THRESH_BINARY);
-    big_image_new_gray = 255-big_image_new_gray_inverse;
-
-    // this image is 8 bit image 1 channel (is a binary image with values 0 or 255)
-    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\rebif_gray.jpg" , big_image_new_gray );
-
-    QString final_image = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\test_image.jpg";
-    Mat test_image = imread(final_image.toStdString(),CV_LOAD_IMAGE_COLOR);
-    Mat test_image_gray;
-    cv::cvtColor(test_image, test_image_gray, CV_BGR2GRAY);
-    cv::cvtColor(test_image_gray, test_image, CV_GRAY2BGR);
-    Mat outputMat;
-    test_image.copyTo(outputMat, big_image_new_gray);
-
-    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\outputMat.jpg" , outputMat );
-    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\test_image.jpg" , test_image );
 
 
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-    index_x=0, index_y=0;
-    for(int i=0;i< data.count(); i++){
-        QString filenameCurrentImageVoid = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\void_image.png";
+        /////////////////////////////////////////////////////////////////////////
+        // generating an image where the color is the mean color of the same area in the original image
+        /////////////////////////////////////////////////////////////////////////
+        QString filenameCurrentImageVoid = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension2\\void_image.png";
         Mat currentImageVoid = imread(filenameCurrentImageVoid.toStdString(),CV_LOAD_IMAGE_COLOR);
-
         Rect roi = cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension);
         Mat cropped = Mat(test_image_gray, roi);
         Scalar mean, stdv;
         cv::meanStdDev(cropped,mean,stdv);
-        //cout << mean << endl;
-        //imshow( "cropped", cropped );
-        //waitKey(0);
-
-        //currentImageVoid.setTo(cv::Scalar(rand() % 255,rand() % 255,rand() % 255));
         currentImageVoid.setTo((int)mean[0]);
-        currentImageVoid.copyTo(big_image_new_test(cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension)));
+
+
+        /////////////////////////////////////////////////////////////////////////
+        // generating an cutting image of the same area in the original image
+        /////////////////////////////////////////////////////////////////////////
+        roi = cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension);
+        Mat croppedImage = Mat(test_image_gray, roi);
+
+
+        imshow( "imageBody", currentImageBody );
+        imshow( "currentImageVoid", currentImageVoid );
+        imshow( "croppedImage", croppedImage );
+        waitKey(0);
 
         // ending one line of the big image we will pass to the next one
         index_x++;
@@ -167,12 +140,6 @@ int main(int argc, char *argv[])
             index_x=0;
         }
     }
-    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\big_image_new_test.jpg" , big_image_new_test );
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-
 
     cout << "temporary finish !!!" << endl;
     waitKey(0);
@@ -180,5 +147,6 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
-
+// cerchi copriago color panna 240,240,240
+// immagine piccole del valore medio ed interno del corpo della persona come immagine
 
