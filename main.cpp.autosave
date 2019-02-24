@@ -180,5 +180,6 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
-
+// cerchi copriago color panna 240,240,240
+// immagine piccole del valore medio ed interno del corpo della persona come immagine
 
