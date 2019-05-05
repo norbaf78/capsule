@@ -13,7 +13,37 @@
 using namespace std;
 using namespace cv;
 
+Mat sumTwoMat3Channel(Mat matImage, Mat matMask, Vec3b th){
+    int rows = matImage.rows; // is equal in matMask
+    int cols = matImage.cols; // is equal in matMask
+    int type = matImage.type(); // is equal in matMask
+    Mat newMatEnsamble = matImage.clone();
+    cout << matMask.type() << endl;
+    cout << matImage.type() << endl;
+    cout << newMatEnsamble.type() << endl;
+    if((matImage.rows == matMask.rows) && (matImage.cols == matMask.cols)){
+        if((matImage.channels() == 3) && (matMask.channels() == 3) && (matImage.type() == matMask.type())){
+            for(int index_y = 0;index_y < rows; index_y++){
+                for(int index_x = 0;index_x < cols; index_x++){
+                    Vec3b val = matMask.at<Vec3b>(Point(index_x,index_y));
+                    if (val != th && index_y > 0){
+                        newMatEnsamble.at<Vec3b>(Point(index_x,index_y)) = Vec3b(0,0,0) + val;
+                        //cout << val << " " << Vec3b(0,0,0) << endl ;
+                    }
+                }
+            }
+            return newMatEnsamble;
+        }
+        else{
+            return Mat(1,1,0);
+        }
+    }
+    else{
+        return Mat(0,0,0);
+    }
+}
 
+// 10453 x 16885
 
 int main(int argc, char *argv[])
 
@@ -77,7 +107,7 @@ int main(int argc, char *argv[])
     ////////////////////////////////////////////////////////////////////////////////////
     /// load the original image will be used ad background
     ///////////////////////////////////////////////////////////////////////////////////////
-    QString final_image = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\test_image.jpg";
+    QString final_image = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\test_image3_update.jpg";
     Mat test_image = imread(final_image.toStdString(),CV_LOAD_IMAGE_COLOR);
     Mat test_image_gray;
     cv::cvtColor(test_image, test_image_gray, CV_BGR2GRAY);
@@ -105,10 +135,10 @@ int main(int argc, char *argv[])
         }
         //image has been selected and now circle needle and date will be added
         Mat currentImageBody = imread(filenameCurrentImageBody.toStdString(),CV_LOAD_IMAGE_COLOR);
-        //cv::threshold(currentImageBody,currentImageBody,110,255,cv::THRESH_BINARY);
+        cv::threshold(currentImageBody,currentImageBody,254,255,cv::THRESH_BINARY);
         if(position.toInt() != 0){
             putText(currentImageBody, dayDate.toStdString(), Point(imageDimension/14,imageDimension-20), FONT_HERSHEY_TRIPLEX , 1.7, CV_RGB(0,0,0), 2.0 );
-            circle(currentImageBody, Point((imageDimension-1)/2, (imageDimension-1)/2), circleRadious, CV_RGB(240,240,240), -2 , 8, 0);
+            circle(currentImageBody, Point((imageDimension-1)/2, (imageDimension-1)/2), circleRadious, CV_RGB(220,220,220), -2 , 8, 0);
         }
 
 /*
@@ -130,15 +160,16 @@ int main(int argc, char *argv[])
         Rect roi = cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension);
         Mat croppedImage = Mat(test_image_gray, roi);
 
-        Mat MatTransparent;
-        cv::inRange(currentImageBody, cv::Scalar(0,0,0), cv::Scalar(241,241,241), MatTransparent);
-        croppedImage.copyTo(currentImageBody, 255-MatTransparent);
+        //Mat MatTransparent;
+        //cv::inRange(currentImageBody, cv::Scalar(0,0,0), cv::Scalar(241,241,241), MatTransparent);
+        //croppedImage.copyTo(currentImageBody, 255-MatTransparent);
+        currentImageBody.copyTo(big_image_new(cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension)));
 
-        cv::imshow("transparent pixel", MatTransparent);
+        //cv::imshow("transparent pixel", MatTransparent);
         //imshow( "currentImageVoid", currentImageVoid );
         imshow( "imageBody", currentImageBody );
         imshow( "croppedImage", croppedImage );
-        waitKey(0);
+        //waitKey(0);
 
         // ending one line of the big image we will pass to the next one
         index_x++;
@@ -147,6 +178,12 @@ int main(int argc, char *argv[])
             index_x=0;
         }
     }
+
+    // this image is 24 bit image 3 channel
+    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\rebif_color.jpg" , big_image_new );
+    Mat xx = sumTwoMat3Channel(test_image,big_image_new,Vec3b(255,255,255));
+    cout << "xx.rows: " << xx.rows << " xx.cols: " << xx.cols << " xx.channel: " << xx.channels() << endl;
+    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\rebif_color_done.jpg" , xx );
 
     cout << "temporary finish !!!" << endl;
     waitKey(0);
