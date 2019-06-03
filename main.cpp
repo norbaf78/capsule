@@ -14,6 +14,7 @@ using namespace std;
 using namespace cv;
 
 Mat sumTwoMat3Channel(Mat matImage, Mat matMask, Vec3b th){
+    cout << "------- sumTwoMat3Channel ------- start";
     int rows = matImage.rows; // is equal in matMask
     int cols = matImage.cols; // is equal in matMask
     int type = matImage.type(); // is equal in matMask
@@ -22,13 +23,46 @@ Mat sumTwoMat3Channel(Mat matImage, Mat matMask, Vec3b th){
     cout << matImage.type() << endl;
     cout << newMatEnsamble.type() << endl;
     if((matImage.rows == matMask.rows) && (matImage.cols == matMask.cols)){
+        cout << "qui si 2" << endl;
         if((matImage.channels() == 3) && (matMask.channels() == 3) && (matImage.type() == matMask.type())){
+            cout << "qui si 3" << endl;
             for(int index_y = 0;index_y < rows; index_y++){
                 for(int index_x = 0;index_x < cols; index_x++){
                     Vec3b val = matMask.at<Vec3b>(Point(index_x,index_y));
                     if (val != th && index_y > 0){
                         newMatEnsamble.at<Vec3b>(Point(index_x,index_y)) = Vec3b(0,0,0) + val;
-                        //cout << val << " " << Vec3b(0,0,0) << endl ;
+                    }
+                }
+            }
+            cout << "------- sumTwoMat3Channel ------- end";
+            return newMatEnsamble;
+        }
+        else{
+            cout << "------- sumTwoMat3Channel ------- end";
+            return Mat(1,1,0);
+        }
+    }
+    else{
+        cout << "------- sumTwoMat3Channel ------- end";
+        return Mat(0,0,0);
+    }
+}
+
+Mat sumTwoMat1Channel(Mat matImage, Mat matMask, Vec3b th){
+    int rows = matImage.rows; // is equal in matMask
+    int cols = matImage.cols; // is equal in matMask
+    int type = matImage.type();
+    Mat newMatEnsamble = matImage.clone();
+    cout << matMask.type() << endl;
+    cout << matImage.type() << endl;
+    cout << newMatEnsamble.type() << endl;
+    if((matImage.rows == matMask.rows) && (matImage.cols == matMask.cols)){
+        if(matImage.channels() == 3) {
+            for(int index_y = 0;index_y < rows; index_y++){
+                for(int index_x = 0;index_x < cols; index_x++){
+                    Vec3b val = matMask.at<Vec3b>(Point(index_x,index_y));
+                    if (val != th){
+                        newMatEnsamble.at<Vec3b>(Point(index_x,index_y)) = Vec3b(0,0,0);
                     }
                 }
             }
@@ -43,32 +77,39 @@ Mat sumTwoMat3Channel(Mat matImage, Mat matMask, Vec3b th){
     }
 }
 
-// 10453 x 16885
+// 16 in x sono 90 cm
+// 23 in y sono quindi 130
 
 int main(int argc, char *argv[])
 
 {
     QCoreApplication a(argc, argv);
-
-    const int images_in_x = 26; //23*47 = 1081 // 26*42 = 1092
-    const int images_in_y = 42;
-    const int border_pixel = 1;
-    const int imageDimension = 401; // dimension images in "C:\Users\Fabio Roncato\Documents\images_rebif\rebif\ridimension" imageDimension x imageDimension
-    const int circleRadious = imageDimension/6;
+    const int images_in_x = 23;
+    const int images_in_y = 16;
+    const int imageDimension_y = 915; // dimension images in "C:\Users\Fabio Roncato\Documents\images_rebif\new_rebif" imageDimension x imageDimension
+    const int imageDimension_x = 526;
+    const int border_pixel = 2; //imageDimension_x/2;
     QDate startingDay(2010, 5, 17);
-    QDate endingDay(2013, 5, 4);
+    QDate endingDay(2011, 5, 18);
+    QFile file("C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\date_primo_anno.txt");
+    QString pathImageFrontInjection = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\injectionSite_front_";
+    QString pathImageBackInjection = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\injectionSite_back_";
+    QString imageNoInjection = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\injectionSite_0.png";
+    QString savePathBigInjectionImage = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\rebif_color_done.jpg";
+    QString imageSentence = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\ScrittaDaPreparare_6.png";
+    QString imageSentencePlusBigImageDone = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out.jpg";
+    QString imagePhotoToAdd = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\IMG_20190531_161202.jpg";
+    QString imageFinal = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out2.jpg";
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////
     // open file with information of date, injection yes or no, point of injection (if injection has been done)
-    ////////////////////////////////////////////////////////////////////////////////////
-    QFile file("C:\\Users\\Fabio Roncato\\Documents\\Qt\\09_01_2019_rebif\\date.txt");
+    // and read the data from the file and create three QStringList with those informations
+    ////////////////////////////////////////////////////////////////////////////////////    
     if(!file.open(QFile::ReadOnly|QFile::Text))
         cout << "No file found" << endl;
 
-    ////////////////////////////////////////////////////////////////////////////////////
-    // read the data from the file and create three QStringList with those informations
-    ////////////////////////////////////////////////////////////////////////////////////
     QStringList data;
     QStringList iniezione;
     QStringList posizione;
@@ -98,20 +139,13 @@ int main(int argc, char *argv[])
     cout << "Total days: " << data.count() << endl;
 
 
+
     ////////////////////////////////////////////////////////////////////////////////////
     /// create an image containing all the images for all the days (imageDimension is the dimenion of the small images used)
     ///////////////////////////////////////////////////////////////////////////////////////
     int index_x=0, index_y=0;
-    Mat big_image_new(2*border_pixel+(images_in_y*imageDimension)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*imageDimension)+(images_in_x-1)*1, CV_8UC3, Scalar(0,0,0));
-
-    ////////////////////////////////////////////////////////////////////////////////////
-    /// load the original image will be used ad background
-    ///////////////////////////////////////////////////////////////////////////////////////
-    QString final_image = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\test_image3_update.jpg";
-    Mat test_image = imread(final_image.toStdString(),CV_LOAD_IMAGE_COLOR);
-    Mat test_image_gray;
-    cv::cvtColor(test_image, test_image_gray, CV_BGR2GRAY);
-    cv::cvtColor(test_image_gray, test_image, CV_GRAY2BGR);
+    Mat big_image_new(2*border_pixel+(images_in_y*imageDimension_y)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*imageDimension_x)+(images_in_x-1)*1, CV_8UC3, Scalar(0,0,0));
+    cv::waitKey(0);
 
     // create an image
     QString filenameCurrentImageBody;
@@ -125,52 +159,25 @@ int main(int argc, char *argv[])
         if(iniezione[i].compare("yes") == 0){ // iniezione effettuata
             position = posizione[i];
             if(position.toInt() != 0 && position.toInt()< 19) // effettuata frontalmente
-                filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_front_" + position + ".png";
+                filenameCurrentImageBody = pathImageFrontInjection + position + ".png";
             else if(position.toInt() != 0 && position.toInt()>= 19) // effettuata posteriormente
-                filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_back_" +  position + ".png";
+                filenameCurrentImageBody = pathImageBackInjection + position + ".png";
         }
         else{ // iniezione non effettuata
             position="0";
-            filenameCurrentImageBody = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension\\injectionSite_0.png";
+            filenameCurrentImageBody = imageNoInjection;
         }
-        //image has been selected and now circle needle and date will be added
+        //image has been selected and date injection will be added
         Mat currentImageBody = imread(filenameCurrentImageBody.toStdString(),CV_LOAD_IMAGE_COLOR);
         cv::threshold(currentImageBody,currentImageBody,254,255,cv::THRESH_BINARY);
         if(position.toInt() != 0){
-            putText(currentImageBody, dayDate.toStdString(), Point(imageDimension/14,imageDimension-20), FONT_HERSHEY_TRIPLEX , 1.7, CV_RGB(0,0,0), 2.0 );
-            circle(currentImageBody, Point((imageDimension-1)/2, (imageDimension-1)/2), circleRadious, CV_RGB(220,220,220), -2 , 8, 0);
+            putText(currentImageBody, dayDate.toStdString(), Point(60,imageDimension_y-110), FONT_HERSHEY_TRIPLEX , 2.0, CV_RGB(0,0,0), 4.0 );
         }
 
-/*
         /////////////////////////////////////////////////////////////////////////
-        // generating an image where the color is the mean color of the same area in the original image
+        // insert the small image into the big one created before
         /////////////////////////////////////////////////////////////////////////
-        QString filenameCurrentImageVoid = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\rebif\\ridimension2\\void_image.png";
-        Mat currentImageVoid = imread(filenameCurrentImageVoid.toStdString(),CV_LOAD_IMAGE_COLOR);
-        Rect roi = cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension);
-        Mat cropped = Mat(test_image_gray, roi);
-        Scalar mean, stdv;
-        cv::meanStdDev(cropped,mean,stdv);
-        currentImageVoid.setTo((int)mean[0]);
-*/
-
-        /////////////////////////////////////////////////////////////////////////
-        // generating an cutting image of the same area in the original image
-        /////////////////////////////////////////////////////////////////////////
-        Rect roi = cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension);
-        Mat croppedImage = Mat(test_image_gray, roi);
-
-        //Mat MatTransparent;
-        //cv::inRange(currentImageBody, cv::Scalar(0,0,0), cv::Scalar(241,241,241), MatTransparent);
-        //croppedImage.copyTo(currentImageBody, 255-MatTransparent);
-        currentImageBody.copyTo(big_image_new(cv::Rect(border_pixel+index_x*(imageDimension+1),border_pixel+index_y*(imageDimension+1),imageDimension, imageDimension)));
-
-        //cv::imshow("transparent pixel", MatTransparent);
-        //imshow( "currentImageVoid", currentImageVoid );
-        imshow( "imageBody", currentImageBody );
-        imshow( "croppedImage", croppedImage );
-        //waitKey(0);
-
+        currentImageBody.copyTo(big_image_new(cv::Rect(border_pixel+index_x*(imageDimension_x+1),border_pixel+index_y*(imageDimension_y+1),imageDimension_x, imageDimension_y)));
         // ending one line of the big image we will pass to the next one
         index_x++;
         if(index_x>images_in_x-1){
@@ -179,11 +186,19 @@ int main(int argc, char *argv[])
         }
     }
 
-    // this image is 24 bit image 3 channel
-    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\rebif_color.jpg" , big_image_new );
-    Mat xx = sumTwoMat3Channel(test_image,big_image_new,Vec3b(255,255,255));
-    cout << "xx.rows: " << xx.rows << " xx.cols: " << xx.cols << " xx.channel: " << xx.channels() << endl;
-    imwrite("C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\rebif_color_done.jpg" , xx );
+    imwrite(savePathBigInjectionImage.toStdString(), big_image_new);
+    Mat matMask = imread(imageSentence.toStdString());
+    // add the two image ( big image injection + sentence image) and save it
+    Mat out = sumTwoMat1Channel(big_image_new, matMask, Vec3b(255,255,255));
+    imwrite(imageSentencePlusBigImageDone.toStdString() , out );
+
+
+
+    // add the previous image and the photo image( big image injection + sentence image  + photo image) and save it
+    Mat image = imread(imagePhotoToAdd.toStdString(),CV_LOAD_IMAGE_COLOR);
+    Mat out2 = sumTwoMat3Channel(image, out, Vec3b(255,255,255));
+    imwrite(imageFinal , out2 );
+
 
     cout << "temporary finish !!!" << endl;
     waitKey(0);
@@ -191,6 +206,4 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
-// cerchi copriago color panna 240,240,240
-// immagine piccole del valore medio ed interno del corpo della persona come immagine
 
