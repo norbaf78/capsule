@@ -13,77 +13,51 @@
 using namespace std;
 using namespace cv;
 
-Mat sumTwoMat3Channel(Mat matImage, Mat matMask, Vec3b th){
-    cout << "------- sumTwoMat3Channel ------- start";
+
+Mat addTwo3ChannelMat(Mat matImage, Mat matToAdd, Vec3b th){
+    cout << "------- addTwoMat3Channel ------- start" << endl;
     int rows = matImage.rows; // is equal in matMask
     int cols = matImage.cols; // is equal in matMask
     int type = matImage.type(); // is equal in matMask
     Mat newMatEnsamble = matImage.clone();
-    cout << matMask.type() << endl;
-    cout << matImage.type() << endl;
-    cout << newMatEnsamble.type() << endl;
-    if((matImage.rows == matMask.rows) && (matImage.cols == matMask.cols)){
-        cout << "qui si 2" << endl;
-        if((matImage.channels() == 3) && (matMask.channels() == 3) && (matImage.type() == matMask.type())){
-            cout << "qui si 3" << endl;
+    cout << "matImage type: " + matImage.type() << endl;
+    cout << "matToAdd type: " + matToAdd.type() << endl;
+    if((matImage.rows == matToAdd.rows) && (matImage.cols == matToAdd.cols)){  // the dimension of the two images is the same
+        if((matImage.channels() == 3) && (matToAdd.channels() == 3) && (matImage.type() == matToAdd.type())){ // the type of the two images is the same and both have 3 channel
             for(int index_y = 0;index_y < rows; index_y++){
                 for(int index_x = 0;index_x < cols; index_x++){
-                    Vec3b val = matMask.at<Vec3b>(Point(index_x,index_y));
-                    if (val != th && index_y > 0){
-                        newMatEnsamble.at<Vec3b>(Point(index_x,index_y)) = Vec3b(0,0,0) + val;
+                    Vec3b val = matToAdd.at<Vec3b>(Point(index_x,index_y)); // get the current point value in matToAdd
+                    if (val != th){  // if the pixel value in matToAdd is different from the setted value, set the mask value
+                        newMatEnsamble.at<Vec3b>(Point(index_x,index_y)) = val;
                     }
                 }
             }
-            cout << "------- sumTwoMat3Channel ------- end";
+            cout << "------- addTwoMat3Channel ------- end" << endl;
             return newMatEnsamble;
         }
         else{
-            cout << "------- sumTwoMat3Channel ------- end";
+            cout << "----b--- addTwoMat3Channel ------- end" << endl;
             return Mat(1,1,0);
         }
     }
     else{
-        cout << "------- sumTwoMat3Channel ------- end";
+        cout << "----c--- addTwoMat3Channel ------- end" << endl;
         return Mat(0,0,0);
     }
 }
 
-Mat sumTwoMat1Channel(Mat matImage, Mat matMask, Vec3b th){
-    int rows = matImage.rows; // is equal in matMask
-    int cols = matImage.cols; // is equal in matMask
-    int type = matImage.type();
-    Mat newMatEnsamble = matImage.clone();
-    cout << matMask.type() << endl;
-    cout << matImage.type() << endl;
-    cout << newMatEnsamble.type() << endl;
-    if((matImage.rows == matMask.rows) && (matImage.cols == matMask.cols)){
-        if(matImage.channels() == 3) {
-            for(int index_y = 0;index_y < rows; index_y++){
-                for(int index_x = 0;index_x < cols; index_x++){
-                    Vec3b val = matMask.at<Vec3b>(Point(index_x,index_y));
-                    if (val != th){
-                        newMatEnsamble.at<Vec3b>(Point(index_x,index_y)) = Vec3b(0,0,0);
-                    }
-                }
-            }
-            return newMatEnsamble;
-        }
-        else{
-            return Mat(1,1,0);
-        }
-    }
-    else{
-        return Mat(0,0,0);
-    }
-}
+
+
 
 // 16 in x sono 90 cm
 // 23 in y sono quindi 130
 
 int main(int argc, char *argv[])
-
 {
     QCoreApplication a(argc, argv);
+    ///////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////// Settings parameters ///////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
     const int images_in_x = 23;
     const int images_in_y = 16;
     const int imageDimension_y = 915; // dimension images in "C:\Users\Fabio Roncato\Documents\images_rebif\new_rebif" imageDimension x imageDimension
@@ -103,10 +77,10 @@ int main(int argc, char *argv[])
 
 
 
-    ////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
     // open file with information of date, injection yes or no, point of injection (if injection has been done)
     // and read the data from the file and create three QStringList with those informations
-    ////////////////////////////////////////////////////////////////////////////////////    
+    ///////////////////////////////////////////////////////////////////////////////////
     if(!file.open(QFile::ReadOnly|QFile::Text))
         cout << "No file found" << endl;
 
@@ -122,7 +96,6 @@ int main(int argc, char *argv[])
       data.append(dateString); // the value are append for the data in "data"
       iniezione.append(yesOrNo); // the value are append for the injection in "iniezione"
       posizione.append(position); // the value are append for the injection position in "posizione"
-     // cout << dateString.toStdString() << " - " << yesOrNo.toStdString() << " - " << position.toStdString() << endl;
     }
     cout << endl;
     cout << "data elements: " << data.count() << endl;
@@ -141,20 +114,18 @@ int main(int argc, char *argv[])
 
 
     ////////////////////////////////////////////////////////////////////////////////////
-    /// create an image containing all the images for all the days (imageDimension is the dimenion of the small images used)
-    ///////////////////////////////////////////////////////////////////////////////////////
-    int index_x=0, index_y=0;
-    Mat big_image_new(2*border_pixel+(images_in_y*imageDimension_y)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*imageDimension_x)+(images_in_x-1)*1, CV_8UC3, Scalar(0,0,0));
-    cv::waitKey(0);
+    /// create an image containing all the images for all the days (imageDimension_x and imageDimension_y are the dimension of the small images used)
+    /// and fill the new big image created with the small images available with front, back and no injection
+    ////////////////////////////////////////////////////////////////////////////////////
+    Mat bigImageAllInjection(2*border_pixel+(images_in_y*imageDimension_y)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*imageDimension_x)+(images_in_x-1)*1, CV_8UC3, Scalar(0,0,0));
 
-    // create an image
+    // fill the image
     QString filenameCurrentImageBody;
     QString dayDate;
     QString position;
+    int index_x=0, index_y=0;
     for(int i=0;i< data.count(); i++){ // for all the date (for all the days)
-        /////////////////////////////////////////////////////////////////////////
         // generating which image(different type depending if injection done and where) take
-        /////////////////////////////////////////////////////////////////////////
         dayDate = data[i];
         if(iniezione[i].compare("yes") == 0){ // iniezione effettuata
             position = posizione[i];
@@ -163,7 +134,7 @@ int main(int argc, char *argv[])
             else if(position.toInt() != 0 && position.toInt()>= 19) // effettuata posteriormente
                 filenameCurrentImageBody = pathImageBackInjection + position + ".png";
         }
-        else{ // iniezione non effettuata
+        else{ // no injection
             position="0";
             filenameCurrentImageBody = imageNoInjection;
         }
@@ -173,37 +144,31 @@ int main(int argc, char *argv[])
         if(position.toInt() != 0){
             putText(currentImageBody, dayDate.toStdString(), Point(60,imageDimension_y-110), FONT_HERSHEY_TRIPLEX , 2.0, CV_RGB(0,0,0), 4.0 );
         }
-
-        /////////////////////////////////////////////////////////////////////////
         // insert the small image into the big one created before
-        /////////////////////////////////////////////////////////////////////////
-        currentImageBody.copyTo(big_image_new(cv::Rect(border_pixel+index_x*(imageDimension_x+1),border_pixel+index_y*(imageDimension_y+1),imageDimension_x, imageDimension_y)));
-        // ending one line of the big image we will pass to the next one
+        currentImageBody.copyTo(bigImageAllInjection(cv::Rect(border_pixel+index_x*(imageDimension_x+1),border_pixel+index_y*(imageDimension_y+1),imageDimension_x, imageDimension_y)));
         index_x++;
         if(index_x>images_in_x-1){
             index_y++;
             index_x=0;
         }
     }
+    imwrite(savePathBigInjectionImage.toStdString(), bigImageAllInjection);
 
-    imwrite(savePathBigInjectionImage.toStdString(), big_image_new);
-    Mat matMask = imread(imageSentence.toStdString());
     // add the two image ( big image injection + sentence image) and save it
-    Mat out = sumTwoMat1Channel(big_image_new, matMask, Vec3b(255,255,255));
-    imwrite(imageSentencePlusBigImageDone.toStdString() , out );
-
-
+    Mat matSentence = imread(imageSentence.toStdString());
+    Mat outputImage1 = addTwo3ChannelMat(bigImageAllInjection, matSentence, Vec3b(255,255,255));
+    imwrite(imageSentencePlusBigImageDone.toStdString() , outputImage1 );
 
     // add the previous image and the photo image( big image injection + sentence image  + photo image) and save it
-    Mat image = imread(imagePhotoToAdd.toStdString(),CV_LOAD_IMAGE_COLOR);
-    Mat out2 = sumTwoMat3Channel(image, out, Vec3b(255,255,255));
-    imwrite(imageFinal , out2 );
+    Mat imagePhoto = imread(imagePhotoToAdd.toStdString(),CV_LOAD_IMAGE_COLOR);
+    Mat outputImage2 = addTwo3ChannelMat(imagePhoto, outputImage1, Vec3b(255,255,255));
+    imwrite(imageFinal.toStdString() , outputImage2 );
 
 
-    cout << "temporary finish !!!" << endl;
-    waitKey(0);
-
+    cout << "finish !!!" << endl;
+    waitKey(10);
     return a.exec();
 }
+
 
 
