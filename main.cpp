@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
     const int imageDimension_y = 915; // dimension images in "C:\Users\Fabio Roncato\Documents\images_rebif\new_rebif" imageDimension x imageDimension
     const int imageDimension_x = 526;
     const int border_pixel = 2; //imageDimension_x/2;
+    const int additional_border = 526;
     QDate startingDay(2010, 5, 17);
     QDate endingDay(2011, 5, 18);
     QFile file("C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\date_primo_anno.txt");
@@ -74,6 +75,7 @@ int main(int argc, char *argv[])
     QString imageSentencePlusBigImageDone = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out.jpg";
     QString imagePhotoToAdd = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\IMG_20190531_161202.jpg";
     QString imageFinal = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out2.jpg";
+    QString imageFinalWithBorder = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out3.jpg";
 
 
 
@@ -118,6 +120,7 @@ int main(int argc, char *argv[])
     /// and fill the new big image created with the small images available with front, back and no injection
     ////////////////////////////////////////////////////////////////////////////////////
     Mat bigImageAllInjection(2*border_pixel+(images_in_y*imageDimension_y)+(images_in_y-1)*1, 2*border_pixel+(images_in_x*imageDimension_x)+(images_in_x-1)*1, CV_8UC3, Scalar(0,0,0));
+    Mat bigImageAllInjectionWithAdditionalBorder(2*additional_border + 2*border_pixel+(images_in_y*imageDimension_y)+(images_in_y-1)*1, 2*additional_border + 2*border_pixel+(images_in_x*imageDimension_x)+(images_in_x-1)*1, CV_8UC3, Scalar(180,180,180));
 
     // fill the image
     QString filenameCurrentImageBody;
@@ -163,6 +166,10 @@ int main(int argc, char *argv[])
     Mat imagePhoto = imread(imagePhotoToAdd.toStdString(),CV_LOAD_IMAGE_COLOR);
     Mat outputImage2 = addTwo3ChannelMat(imagePhoto, outputImage1, Vec3b(255,255,255));
     imwrite(imageFinal.toStdString() , outputImage2 );
+
+    // add white border left-right, up-down
+    outputImage2.copyTo(bigImageAllInjectionWithAdditionalBorder(cv::Rect(additional_border,additional_border,outputImage2.cols, outputImage2.rows)));
+    imwrite(imageFinalWithBorder.toStdString() , bigImageAllInjectionWithAdditionalBorder );
 
 
     cout << "finish !!!" << endl;
