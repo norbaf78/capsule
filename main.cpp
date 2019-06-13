@@ -48,12 +48,38 @@ Mat addTwo3ChannelMat(Mat matImage, Mat matToAdd, Vec3b th){
 
 
 
+Mat addSmallImageToBigMat(Mat bigMatImage, Mat smallMatToAdd, Vec3b th, int startFromBigImage_X, int startFromBigImage_Y){
+    cout << "------- addSmallImageToBigMat ------- start" << endl;
+    int rowsBigMat = bigMatImage.rows;
+    int colsBigMat = bigMatImage.cols;
+    int typeBigMat = bigMatImage.type();
+    int rowsSmallMat = smallMatToAdd.rows;
+    int colsSmallMat = smallMatToAdd.cols;
+    int typeSmallMat = smallMatToAdd.type();
+    Mat newMatEnsamble = bigMatImage.clone();
+    cout << "bigMatImage type: " + bigMatImage.type() << endl;
+    cout << "smallMatToAdd type: " + smallMatToAdd.type() << endl;
+    for(int index_y = startFromBigImage_Y;index_y < startFromBigImage_Y + rowsSmallMat; index_y++){
+        for(int index_x = startFromBigImage_X;index_x < startFromBigImage_X + colsSmallMat; index_x++){
+            Vec3b val = smallMatToAdd.at<Vec3b>(Point((index_x-startFromBigImage_X),(index_y-startFromBigImage_Y))); // get the current point value in matToAdd
+            if (val != th){  // if the pixel value in matToAdd is different from the setted value, set the mask value
+                newMatEnsamble.at<Vec3b>(Point(index_x,index_y)) = val;
+            }
+         }
+    }
+    cout << "------- addSmallImageToBigMat ------- end" << endl;
+    return newMatEnsamble;
+}
+
+
+
 
 // 16 in x sono 90 cm
 // 23 in y sono quindi 130
 
 int main(int argc, char *argv[])
 {
+    // DIM IMG 12124 in x - 14659 in y
     QCoreApplication a(argc, argv);
     ///////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////// Settings parameters ///////////////////////////////
@@ -66,14 +92,16 @@ int main(int argc, char *argv[])
     const int additional_border = 526;
     QDate startingDay(2010, 5, 17);
     QDate endingDay(2011, 5, 18);
+    int whereXBibImage = 1300;
+    int whereYBibImage = 8500;
     QFile file("C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\date_primo_anno.txt");
     QString pathImageFrontInjection = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\injectionSite_front_";
     QString pathImageBackInjection = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\injectionSite_back_";
     QString imageNoInjection = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\injectionSite_0.png";
     QString savePathBigInjectionImage = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\rebif_color_done.jpg";
-    QString imageSentence = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\ScrittaDaPreparare_6.png";
+    QString imageSentence = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\ScrittaDaPreparare_6_bis.png";
     QString imageSentencePlusBigImageDone = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out.jpg";
-    QString imagePhotoToAdd = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\IMG_20190531_161202.jpg";
+    QString imagePhotoToAdd = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\IMG-4632_bis_bw.jpg"; //12124 in x - 14659 in y
     QString imageFinal = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out2.jpg";
     QString imageFinalWithBorder = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out3.jpg";
 
@@ -150,7 +178,7 @@ int main(int argc, char *argv[])
         // insert the small image into the big one created before
         currentImageBody.copyTo(bigImageAllInjection(cv::Rect(border_pixel+index_x*(imageDimension_x+1),border_pixel+index_y*(imageDimension_y+1),imageDimension_x, imageDimension_y)));
         index_x++;
-        if(index_x>images_in_x-1){
+        if(index_x > images_in_x-1){
             index_y++;
             index_x=0;
         }
@@ -159,7 +187,8 @@ int main(int argc, char *argv[])
 
     // add the two image ( big image injection + sentence image) and save it
     Mat matSentence = imread(imageSentence.toStdString());
-    Mat outputImage1 = addTwo3ChannelMat(bigImageAllInjection, matSentence, Vec3b(255,255,255));
+    //Mat outputImage1 = addTwo3ChannelMat(bigImageAllInjection, matSentence, Vec3b(255,255,255));
+    Mat outputImage1 = addSmallImageToBigMat(bigImageAllInjection, matSentence, Vec3b(255,255,255), whereXBibImage, whereYBibImage);
     imwrite(imageSentencePlusBigImageDone.toStdString() , outputImage1 );
 
     // add the previous image and the photo image( big image injection + sentence image  + photo image) and save it
