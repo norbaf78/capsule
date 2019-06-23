@@ -71,6 +71,50 @@ Mat addSmallImageToBigMat(Mat bigMatImage, Mat smallMatToAdd, Vec3b th, int star
     return newMatEnsamble;
 }
 
+Mat addColorMatToBwMatWithMask(Mat colorMat, Mat bwMat, Mat maskMat, Vec3b th){
+    int rowsColorMat = colorMat.rows;
+    int colsColorMat = colorMat.cols;
+    int rowsBwMat = bwMat.rows;
+    int colsBwMat = bwMat.cols;
+    int rowsMaskMat = maskMat.rows;
+    int colsMaskMat = maskMat.cols;
+
+    Mat newMatEnsamble = bwMat.clone();
+    if((rowsColorMat == rowsBwMat) && (rowsColorMat == rowsMaskMat) && (colsColorMat == colsBwMat) && (colsColorMat == colsMaskMat)){
+        for(int index_y = 0;index_y < rowsMaskMat; index_y++){
+            for(int index_x = 0;index_x < colsMaskMat; index_x++){
+                Vec3b valMask = maskMat.at<Vec3b>(Point(index_x,index_y));
+                if((valMask[0] != valMask[1] && valMask[1] != valMask[2]) && valMask[2] > 200){
+                    Vec3b valColorMat = colorMat.at<Vec3b>(Point(index_x,index_y));
+                    valColorMat[2] = (valColorMat[2] + 250)/2;
+                    valColorMat[1] = (valColorMat[1] + valColorMat[1])/2;
+                    valColorMat[0] = (valColorMat[0] + valColorMat[0])/2;
+                    newMatEnsamble.at<Vec3b>(Point(index_x,index_y)) = valColorMat;
+                /*
+                    val_0 = newMatEnsamble.at<Vec3b>(Point(index_x-1,index_y-1))
+                    val_1 = newMatEnsamble.at<Vec3b>(Point(index_x,index_y-1))
+                    val_2 = newMatEnsamble.at<Vec3b>(Point(index_x+1,index_y-1))
+                    val_3 = newMatEnsamble.at<Vec3b>(Point(index_x-1,index_y))
+                    val_4 = newMatEnsamble.at<Vec3b>(Point(index_x,index_y))
+                    val_5 = newMatEnsamble.at<Vec3b>(Point(index_x+1,index_y))
+                    val_6 = newMatEnsamble.at<Vec3b>(Point(index_x-1,index_y+1))
+                    val_7 = newMatEnsamble.at<Vec3b>(Point(index_x,index_y+1))
+                    val_8 = newMatEnsamble.at<Vec3b>(Point(index_x+1,index_y+1))
+                    newMatEnsamble.at<Vec3b>(Point(index_x,index_y)) = (val_0 + val_1 + val_2 + val_3 + val_4 + val_5 + val_6 + val_7 + val8)/9
+                */
+                }
+            }
+        }
+        cout << "------- addColorMatToBwMatWithMask ------- end" << endl;
+        return newMatEnsamble;
+    }
+    else{
+        cout << "----c--- addTwoMat3Channel ------- end" << endl;
+        return Mat(0,0,0);
+    }
+}
+
+
 
 
 
@@ -79,6 +123,7 @@ Mat addSmallImageToBigMat(Mat bigMatImage, Mat smallMatToAdd, Vec3b th, int star
 
 int main(int argc, char *argv[])
 {
+#define ALTERNATIVE
     // DIM IMG 12124 in x - 14659 in y
     QCoreApplication a(argc, argv);
     ///////////////////////////////////////////////////////////////////////////////////
@@ -92,18 +137,21 @@ int main(int argc, char *argv[])
     const int additional_border = 526;
     QDate startingDay(2010, 5, 17);
     QDate endingDay(2011, 5, 18);
-    int whereXBibImage = 1300;
-    int whereYBibImage = 8500;
+    int whereXBibImage = 1080;
+    int whereYBibImage = 8720;
     QFile file("C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\date_primo_anno.txt");
     QString pathImageFrontInjection = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\injectionSite_front_";
     QString pathImageBackInjection = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\injectionSite_back_";
     QString imageNoInjection = "C:\\Users\\Fabio Roncato\\Documents\\images_rebif\\injectionSite_0.png";
     QString savePathBigInjectionImage = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\rebif_color_done.jpg";
-    QString imageSentence = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\ScrittaDaPreparare_6_bis.png";
+    QString imageSentence = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\ScrittaDaPreparare_7_bis.png";
     QString imageSentencePlusBigImageDone = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out.jpg";
-    QString imagePhotoToAdd = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\IMG-4632_bis_bw.jpg"; //12124 in x - 14659 in y
+    QString imagePhotoToAdd = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\IMG-4632_tris_bw.jpg"; //12124 in x - 14659 in y
+    QString maskImagePhotoToAdd = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\IMG-4632_tris_mask.jpg";
+    QString colorImagePhotoToAdd = "C:\\Users\\Fabio Roncato\\Documents\\rebif\\IMG-4632_tris_color.jpg";
     QString imageFinal = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out2.jpg";
     QString imageFinalWithBorder = "C:\\Users\\Fabio Roncato\\Documents\\Qt\\24_02_2019_rebif\\out3.jpg";
+
 
 
 
@@ -191,10 +239,19 @@ int main(int argc, char *argv[])
     Mat outputImage1 = addSmallImageToBigMat(bigImageAllInjection, matSentence, Vec3b(255,255,255), whereXBibImage, whereYBibImage);
     imwrite(imageSentencePlusBigImageDone.toStdString() , outputImage1 );
 
+#ifdef ALTERNATIVE
+    Mat imagePhoto = imread(imagePhotoToAdd.toStdString(),CV_LOAD_IMAGE_COLOR);
+    Mat colorImagePhoto = imread(colorImagePhotoToAdd.toStdString(),CV_LOAD_IMAGE_COLOR);
+    Mat maskImagePhoto = imread(maskImagePhotoToAdd.toStdString());
+    Mat imagePhotoToAddNew = addColorMatToBwMatWithMask(colorImagePhoto, imagePhoto, maskImagePhoto, Vec3b(0,0,255));
+    Mat outputImage2 = addTwo3ChannelMat(imagePhotoToAddNew, outputImage1, Vec3b(255,255,255));
+    imwrite(imageFinal.toStdString() , outputImage2 );
+#else
     // add the previous image and the photo image( big image injection + sentence image  + photo image) and save it
     Mat imagePhoto = imread(imagePhotoToAdd.toStdString(),CV_LOAD_IMAGE_COLOR);
     Mat outputImage2 = addTwo3ChannelMat(imagePhoto, outputImage1, Vec3b(255,255,255));
     imwrite(imageFinal.toStdString() , outputImage2 );
+#endif
 
     // add white border left-right, up-down
     outputImage2.copyTo(bigImageAllInjectionWithAdditionalBorder(cv::Rect(additional_border,additional_border,outputImage2.cols, outputImage2.rows)));

@@ -6,3 +6,12 @@ mancano 383-245 = 138
 
 1081 47*23
 1085 31*35 ()
+
+
+distanza tra due centri 209 pixel
+
+209  == 1.6 cm
+
+13176 : x = 209 : 16 mm -> x = 1008 mm
+15711 : y = 209 : 16 mm -> y = 1203 mm
+
